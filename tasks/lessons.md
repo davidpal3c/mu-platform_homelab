@@ -330,7 +330,6 @@ Tags:
 
 ---
 
-
 # Verification
 
 ## [VER-001] Always Validate System State Using Commands
