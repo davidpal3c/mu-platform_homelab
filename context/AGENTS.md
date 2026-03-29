@@ -647,7 +647,6 @@ docs/platform-overview.md
 			(This goes into tasks/todo.md)
 
 
-
 	State 4 — Implementation		
 
 		Purpose:
@@ -688,6 +687,7 @@ docs/platform-overview.md
 
 
 		But they should still all work from the same task spec and converge back into one verification state (State 4)
+
 
 
 
@@ -735,6 +735,7 @@ docs/platform-overview.md
 
 
 
+
 	State 6 — Project State Sync
 	
 		Purpose: 
@@ -772,6 +773,7 @@ docs/platform-overview.md
 		This is the most important anti-drift state. 
 
 	
+
 
 	State 7 — Learning Captured
 
