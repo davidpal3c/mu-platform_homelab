@@ -400,11 +400,11 @@ Phase 0 — Platform Foundation
 **Phase 0A — Hardware + OS baseline:** **complete.**  
 Ubuntu Server (headless), UEFI, mdadm RAID1 boot tier, dual ESP, SSH. TASK-0001 closed.
 
-**Phase 0B — Storage architecture:** **active.**  
-Implement `/platform`, `/data`, `/backups`, UUID-based persistent mounts, and bind mounts for platform runtime paths (TASK-0002). Aligns with mini production cluster storage model above.
+**Phase 0B — Storage architecture:** **complete.**  
+`/platform`, `/data`, `/backups`, UUID `fstab`, bind mounts for platform runtime paths. TASK-0002 closed.
 
-**Phase 0C — Kubernetes platform bootstrap:** **next** after 0B.  
-k3s install and runtime relocation to platform tier (TASK-0003).
+**Phase 0C — Kubernetes platform bootstrap:** **active.**  
+Install and stabilize k3s; ensure container runtime and kubelet data use platform-tier bind mounts (TASK-0003).
 
 No application workloads should be implemented yet.
 
@@ -412,14 +412,14 @@ No application workloads should be implemented yet.
 
 # Allowed Work Right Now
 
-Infrastructure only (Phase 0B emphasis):
+Infrastructure only (Phase 0C emphasis):
 
-• **Storage mounts** — platform NVMe, database NVMe, backup HDD; `fstab` by UUID  
-• **Directory layout and bind mounts** per `context/project-context.json` and `tasks/TASK_0002.md`  
-• Verification of mountpoints and free space per tier  
-• k3s bootstrap **planning** only until TASK-0002 is verified complete  
+• **k3s installation and verification** — `kubectl`, node Ready, basic networking  
+• **Runtime alignment** — k3s/containerd/kubelet data on existing `/platform` bind mounts per `context/project-context.json` and `tasks/TASK_0002.md`  
+• **Namespaces / cluster baseline** as scoped in TASK-0003  
+• **Documentation** — build report and blueprint updates when TASK-0003 completes  
 
-Deferred until 0B is done: k3s install, cluster workloads, observability stack install.
+Deferred until TASK-0003 is accepted: production-style ingress/TLS (TASK-0005), full observability stack install (TASK-0004 / Phase 1). Planning those remains allowed.
 
 ---
 

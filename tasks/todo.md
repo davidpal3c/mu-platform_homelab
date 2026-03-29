@@ -132,13 +132,13 @@ Operator runbook (partition, mkfs, fstab, bind mounts, verification); no executi
 
 Title: k3s cluster bootstrap
 
-Phase: Phase 0 — Platform Foundation
+Phase: Phase 0 — Platform Foundation (**sub-phase 0C — Kubernetes Platform Bootstrap**)
 
 Status: Pending
 
 Dependencies:
 
-TASK-0002
+TASK-0002 (complete)
 
 Goal:
 
