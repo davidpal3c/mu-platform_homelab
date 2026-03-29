@@ -16,11 +16,11 @@
       "Corrected boot RAID1 pair to mixed-model Intel SSD Pro 1500 180GB + Intel SSD 520 180GB (both ~90% health).",
       "Added exact mdadm RAID1 partition + mount plan for Ubuntu Server.",
       "Added storage_architecture tier map with explicit mountpoints and directories.",
-      "2026-03-15 TASK-0001: Boot tier implemented on alethos-node-01. RAID1 over sda+sdc (md0→/boot, md1→/, md2→/var), dual ESP (sda1, sdc1). NVMe and sdb (HDD) reserved for TASK-0002.",
-      "2026-03-15 TASK-0002: Platform/database/backup tiers mounted on alethos-node-01. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G 512G-class), /backups on sdb; UUID fstab + five bind mounts to /var/lib/*; ext4 all tiers."
+      "2026-03-15 TASK-0001: Boot tier implemented on alethos-node-01. RAID1 over sda+sdc (md0\u2192/boot, md1\u2192/, md2\u2192/var), dual ESP (sda1, sdc1). NVMe and sdb (HDD) reserved for TASK-0002.",
+      "2026-03-15 TASK-0002: Platform/database/backup tiers mounted on alethos-node-01. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G 512G-class), /backups on sdb; UUID fstab + five bind mounts to /var/lib/*; ext4 all tiers.",
+      "2026-03-28 Documentation sync: Homelab_Hardware_setup.json + task specs aligned to REVIEW-TASK-0002 / BR-TASK-0002; system-blueprint and platform-overview headers cite review PASS and storage-reality delta."
     ]
   },
-
   "homelab_identity": {
     "primary_use": [
       "DevOps / Platform engineering flagship environment",
@@ -36,7 +36,6 @@
       "kubernetes": "k3s"
     }
   },
-
   "design_principles": {
     "mini_production_cluster_definition": "Single host designed like a production cluster via storage/IO/failure-domain separation: OS/control-plane isolation, workload IO isolation, stateful DB isolation, and offline backup/archives isolation.",
     "core_principles": [
@@ -48,7 +47,6 @@
       "GitOps discipline for configuration where feasible"
     ]
   },
-
   "storage_architecture": {
     "boot_tier": {
       "type": "RAID1",
@@ -79,12 +77,11 @@
         "sdb": "1TB HDD (backup tier only)"
       }
     },
-
     "platform_tier": {
       "block_device_alethos_node_01": "/dev/nvme1n1",
       "model": "WD PC SN530 NVMe",
       "approx_size_gb": 238.5,
-      "size_class": "~240G (smaller NVMe on this node → platform tier)",
+      "size_class": "~240G (smaller NVMe on this node \u2192 platform tier)",
       "filesystem": "ext4",
       "label": "platform",
       "uuid_fstab": "70a566e7-4834-48a3-8b5a-a97fc0383488",
@@ -92,11 +89,26 @@
       "fstab_options": "defaults,nofail",
       "layout_note": "Live may use ext4 on whole disk node (no p1); UUID must match blkid for mounted source.",
       "bind_mounts": [
-        { "source": "/platform/rancher", "target": "/var/lib/rancher" },
-        { "source": "/platform/kubelet", "target": "/var/lib/kubelet" },
-        { "source": "/platform/containerd", "target": "/var/lib/containerd" },
-        { "source": "/platform/prometheus", "target": "/var/lib/prometheus" },
-        { "source": "/platform/loki", "target": "/var/lib/loki" }
+        {
+          "source": "/platform/rancher",
+          "target": "/var/lib/rancher"
+        },
+        {
+          "source": "/platform/kubelet",
+          "target": "/var/lib/kubelet"
+        },
+        {
+          "source": "/platform/containerd",
+          "target": "/var/lib/containerd"
+        },
+        {
+          "source": "/platform/prometheus",
+          "target": "/var/lib/prometheus"
+        },
+        {
+          "source": "/platform/loki",
+          "target": "/var/lib/loki"
+        }
       ],
       "bind_options": "bind,nofail",
       "implementation_status": "implemented",
@@ -108,7 +120,6 @@
         "/platform/loki"
       ]
     },
-
     "database_tier": {
       "block_device_alethos_node_01": "/dev/nvme0n1",
       "model": "WD PC SN530 NVMe",
@@ -119,7 +130,7 @@
       "uuid_fstab": "8650424b-1fff-4f16-80a8-43b8545f27ba",
       "mount": "/data",
       "fstab_options": "defaults,nofail",
-      "layout_note": "Larger NVMe on this node → database tier; capacity planning must use measured size.",
+      "layout_note": "Larger NVMe on this node \u2192 database tier; capacity planning must use measured size.",
       "implementation_status": "implemented",
       "directories": [
         "/data/postgres",
@@ -127,7 +138,6 @@
         "/data/redis"
       ]
     },
-
     "backup_tier": {
       "block_device_alethos_node_01": "/dev/sdb",
       "model": "WDC WD10SPZX-class 1TB SATA HDD",
@@ -137,11 +147,10 @@
       "uuid_fstab": "bded6290-6ef8-4c02-90a2-0fff87394ba0",
       "mount": "/backups",
       "fstab_options": "defaults,nofail",
-      "critical_note": "sdc is second RAID SSD — backup tier is sdb only on alethos-node-01.",
+      "critical_note": "sdc is second RAID SSD \u2014 backup tier is sdb only on alethos-node-01.",
       "implementation_status": "implemented"
     }
   },
-
   "current_storage_layout": {
     "boot_system_drive": {
       "device": "Intel SATA SSD 180GB x2 (mixed models)",
@@ -172,7 +181,7 @@
       "failure_behavior_goal": "Single SSD failure does not take system down; bootable from either disk with GRUB installed on both and duplicated ESP."
     },
     "platform_tier": {
-      "device": "/dev/nvme1n1 — WD PC SN530 ~238.5GB NVMe (platform tier)",
+      "device": "/dev/nvme1n1 \u2014 WD PC SN530 ~238.5GB NVMe (platform tier)",
       "implementation_status": "implemented",
       "role": [
         "k3s runtime data (container runtime + kubelet data)",
@@ -184,9 +193,8 @@
       "io_characteristics": "High write amplification; high churn; bursty IO.",
       "failure_behavior_goal": "If platform tier fills/degrades, OS and DB remain intact; workloads may be impacted but node remains recoverable."
     },
-
     "database_tier": {
-      "device": "/dev/nvme0n1 — WD PC SN530 ~476.9GB (512G-class, not literal 1TB)",
+      "device": "/dev/nvme0n1 \u2014 WD PC SN530 ~476.9GB (512G-class, not literal 1TB)",
       "implementation_status": "implemented",
       "role": [
         "PostgreSQL + PostGIS",
@@ -197,9 +205,8 @@
       "io_characteristics": "Latency-sensitive; steady writes; WAL burst potential; compaction/vacuum patterns.",
       "failure_behavior_goal": "DB tier remains stable even if platform tier is saturated; clear recovery path using backups and WAL strategy."
     },
-
     "backup_archive_tier": {
-      "device": "/dev/sdb — ~931.5GB SATA HDD (WDC WD10SPZX-class)",
+      "device": "/dev/sdb \u2014 ~931.5GB SATA HDD (WDC WD10SPZX-class)",
       "implementation_status": "implemented",
       "role": [
         "Database dumps/backups",
@@ -212,7 +219,6 @@
       "failure_behavior_goal": "If backup disk fails, system remains running; backups must be restored from off-host copy (AWS s3 -- future)."
     }
   },
-
   "boot_raid1_partition_plan": {
     "boot_mode_preference": "UEFI",
     "raid_implementation": "mdadm software RAID1 (no motherboard/fake RAID)",
@@ -257,7 +263,6 @@
     ],
     "implementation_status": "implemented"
   },
-
   "mountpoint_and_tier_intent": {
     "boot_tier_mounts_intent": {
       "must_have_mounts": [
@@ -307,7 +312,6 @@
       ]
     }
   },
-
   "filesystem_strategy": {
     "decision_pending": true,
     "candidates": [
@@ -347,7 +351,6 @@
       "backup_tier": "ext4 on alethos-node-01 (implemented)"
     }
   },
-
   "backup_and_recovery_backlog": {
     "backup_rotation_policy": {
       "status": "planned_not_finalized",
@@ -391,7 +394,6 @@
       ]
     }
   },
-
   "observability_focus_for_storage": {
     "status": "in_scope",
     "must_monitor": [
@@ -410,7 +412,6 @@
       "DB IO latency spikes"
     ]
   },
-
   "back_burner_tasks": [
     "Decide ext4 vs ZFS for future nodes or migrations (homelab currently ext4 on all tiers)",
     "Revisit quotas/retention for Prometheus/Loki on /platform when observability is deployed",
@@ -419,13 +420,12 @@
     "Snapshot + rollback testing discipline (scheduled drills + runbooks)",
     "Codify full storage layout as a mini production cluster architecture doc"
   ],
-
   "notes_for_next_agent": {
     "current_state_summary": [
-      "Phase 0A complete: TASK-0001. Boot tier on sda+sdc — mdadm RAID1, dual ESP, Ubuntu Server, SSH.",
-      "Phase 0B complete: TASK-0002. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G), /backups on sdb (~931G); UUID fstab; five bind mounts /platform/* → /var/lib/*; ext4; RAID untouched.",
-      "k3s not installed — next is TASK-0003 (bootstrap) using bind-backed /platform paths.",
-      "Backup tier is sdb only; sdc is RAID member — verify disk identity before any mkfs (lessons INF-007)."
+      "Phase 0A complete: TASK-0001. Boot tier on sda+sdc \u2014 mdadm RAID1, dual ESP, Ubuntu Server, SSH.",
+      "Phase 0B complete: TASK-0002. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G), /backups on sdb (~931G); UUID fstab; five bind mounts /platform/* \u2192 /var/lib/*; ext4; RAID untouched.",
+      "k3s not installed \u2014 next is TASK-0003 (bootstrap) using bind-backed /platform paths.",
+      "Backup tier is sdb only; sdc is RAID member \u2014 verify disk identity before any mkfs (lessons INF-007)."
     ],
     "most_important_next_decisions": [
       "TASK-0003: k3s install with runtime dirs on bind-mounted /platform paths",

@@ -2,7 +2,9 @@
 
 **Purpose:** High-level view of the Alethos Platform storage and boot layout, tier separation, and operational model. Enables future agents and operators to understand platform structure and failure domains without reading implementation detail.
 
-**Last updated:** 2026-03-15 (TASK-0002 documentation sync)
+**Last updated:** 2026-03-28 (verified against `docs/build-reports/reviews/REVIEW-TASK-0002.md` **PASS**; as-built sizes and device names match `BR-TASK-0002` / `context/project-context.json`)
+
+**Storage reality (post TASK-0002):** All four tiers are **mounted at boot** (UUID `fstab`, `nofail`); high-churn paths are **bind-mounted** from `/platform`. Smaller NVMe is **`nvme1n1` → `/platform`**; larger is **`nvme0n1` → `/data`** (~477G, 512G-class—not nominal 1TB).
 
 ---
 

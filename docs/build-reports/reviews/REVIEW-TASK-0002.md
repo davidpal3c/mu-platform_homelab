@@ -16,6 +16,19 @@ Implementation described in **`docs/build-reports/BR-TASK-0002.md`** aligns with
 
 The following is **as recorded** in Part B of the build report (operator should retain spot-check ability using §6).
 
+### Storage reality change (this task vs post–TASK-0001)
+
+**TASK-0002 materially changed on-disk and mount reality** on alethos-node-01. It was not documentation-only.
+
+| Aspect | After TASK-0001 only | After TASK-0002 (implemented) |
+|--------|---------------------|-------------------------------|
+| **`nvme0n1` / `nvme1n1`** | Present but **not** used as persistent platform/database tiers (no `/platform` or `/data` from those devices). | **ext4**, **`/platform`** (smaller NVMe) and **`/data`** (larger NVMe), **`UUID=`** lines in `/etc/fstab`, survive reboot. |
+| **`sdb` (1TB HDD)** | **Unpartitioned / unused** for a backup tier mount. | **ext4**, **`/backups`**, persistent **`fstab`** entry (UUID). |
+| **High-churn paths** | Would have lived on RAID-backed **`/var`** if workloads ran there. | **Five bind mounts** from **`/platform/...`** → **`/var/lib/{rancher,kubelet,containerd,prometheus,loki}`** so churn targets the platform NVMe. |
+| **Boot RAID (`sda`+`sdc`, md0–md2)** | Live OS root. | **Unchanged** — not reformatted; RAID still carries `/`, `/boot`, `/var`. |
+
+So the node moved from “boot tier live, other disks reserved” to “**four-tier storage layout active**”: boot RAID + platform NVMe + database NVMe + backup HDD, with binds wiring k3s/observability paths to `/platform`.
+
 ### Tier mapping (implemented)
 
 | Tier | Device | Approx. size | Mount | Label | Notes |
@@ -184,6 +197,7 @@ Handled per **`BR-TASK-0002.md` Part E** and `tasks/TASK_0002.md`:
 
 ## 9. Summary
 
+- **Storage reality:** TASK-0002 **changed the live node** from “boot RAID only in use; NVMe + HDD reserved” to **persistent `/platform`, `/data`, `/backups`** plus **bind mounts** (subsection *Storage reality change* above). Boot RAID unchanged.
 - **Correctness:** Tier mounts, UUID `fstab`, directory layout, and five bind mounts match `tasks/TASK_0002.md`. Backup on **`sdb`**, RAID on **`sda`/`sdc`** — consistent with live node truth.
 - **Security:** Appropriate for Phase 0; no new exposure beyond standard disk UUIDs in docs.
 - **Risks:** Well called out in BR Part D; wrong-disk risk mitigated by runbook discipline.

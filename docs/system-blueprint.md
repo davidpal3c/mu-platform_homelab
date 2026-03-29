@@ -2,7 +2,9 @@
 
 **Purpose:** Current architecture truth for the Alethos Platform. Describes what exists, how it fits together, trust boundaries, and deployment model so that any future agent or operator can reconstruct the system.
 
-**Last updated:** 2026-03-15 (TASK-0002 documentation sync)
+**Last updated:** 2026-03-28 (verified against `docs/build-reports/reviews/REVIEW-TASK-0002.md` **PASS** and `docs/build-reports/BR-TASK-0002.md` live as-built record)
+
+**Storage reality:** TASK-0002 moved the node from “boot RAID only; NVMe + HDD unused” to **persistent `/platform`, `/data`, `/backups`** plus **five bind mounts** from `/platform/*` to `/var/lib/*`. Boot RAID (`sda`+`sdc`, md0–md2) was not reformatted. See review report §“Storage reality change”.
 
 ---
 
