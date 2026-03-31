@@ -134,43 +134,66 @@ Title: k3s cluster bootstrap
 
 Phase: Phase 0 — Platform Foundation (**sub-phase 0C — Kubernetes Platform Bootstrap**)
 
-Status: Pending
+Status: Ready
 
 Dependencies:
 
 TASK-0002 (complete)
 
+Why now:
+
+Phase 0B storage is complete and verified. k3s can now be installed with runtime and high-churn paths already moved to `/platform` via bind mounts, preserving boot-tier isolation.
+
 Goal:
 
-Deploy Kubernetes runtime using k3s.
+Install and stabilize single-node k3s on alethos-node-01, aligned with storage and failure-domain design.
 
 Scope:
 
-• install k3s
-• relocate runtime directories to platform tier
-• configure namespaces
+• install k3s control plane on Ubuntu Server node  
+• verify runtime paths resolve to `/platform`-backed bind mounts (`/var/lib/rancher`, `kubelet`, `containerd`)  
+• establish baseline namespaces: `opencontext-api`, `opencontext-data`, `opencontext-workers`, `opencontext-ai`, `observability`  
+• validate cluster networking and DNS baseline  
+• define initial local-path PV posture for single-node use (no production HA claims)
 
 Non-scope:
 
 TLS  
 observability stack
+workload deployment
+
+Risks:
+
+• k3s install may silently use wrong paths if bind mounts are missing or not mounted at boot.  
+• resource pressure on single node if defaults are not checked (disk and memory).
 
 Files affected:
 
 platform/k3s/cluster-setup.md  
 docs/system-blueprint.md  
-docs/build-reports/TASK-0003.md
+docs/build-reports/BR-TASK-0003.md
+context/project-context.json (status + cluster baseline)
 
 Acceptance Criteria:
 
-• kubectl get nodes returns Ready
-• cluster networking functional
-• persistent volumes usable
+• `kubectl get nodes` shows single node `Ready`  
+• `kubectl get pods -A` shows healthy system pods (CoreDNS, metrics components if installed by default, local-path provisioner)  
+• namespace set created and listed  
+• `/var/lib/rancher`, `/var/lib/kubelet`, `/var/lib/containerd` confirmed mapped to `/platform/*` via `findmnt`  
+• basic test PVC can bind and mount using local-path storage class
 
 Verification:
 
-kubectl get nodes  
-kubectl get pods -A
+`kubectl get nodes -o wide`  
+`kubectl get pods -A -o wide`  
+`kubectl get ns`  
+`findmnt /var/lib/rancher /var/lib/kubelet /var/lib/containerd`  
+`kubectl get sc`  
+PVC smoke test apply/get/describe
+
+Builder output:
+
+Operator runbook for k3s install, post-install checks, namespace bootstrap, PVC smoke test, and rollback notes.
 
 ---
 

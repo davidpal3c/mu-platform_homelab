@@ -690,7 +690,6 @@ docs/platform-overview.md
 
 
 
-
 	State 5 — Verification
 
 		Purpose: 
