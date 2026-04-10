@@ -333,7 +333,7 @@ todo.md         → executable work
 					docs that must be updated
 
 
-# TASK-001 Implementation Report
+# TASK-000x Implementation Report (sample)
 
 ## Goal
 Bootstrap k3s platform foundation.
