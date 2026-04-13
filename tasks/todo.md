@@ -86,13 +86,13 @@ TASK-0001 (complete)
 
 Goal:
 
-Implement physical/logical storage for platform, database, and backup tiers on **alethos-node-01**, aligned with `context/project-context.json`.
+Implement physical/logical storage for platform, database, and backup tiers on **aluna-node-01**, aligned with `context/project-context.json`.
 
 Scope:
 
 • **Discover** block devices with `lsblk -f` / `nvme list` (names can vary); confirm before destructive steps.  
 • **Platform tier:** single partition on 240GB WD SN530 NVMe → ext4 → `/platform`; create subdirs; bind-mount to `/var/lib/rancher`, `kubelet`, `containerd`, `prometheus`, `loki`.  
-• **Database tier:** ext4 on **larger NVMe** (`/dev/nvme0n1` on alethos-node-01, ~477G 512G-class—not literal 1TB) → `/data`; create `/data/postgres`, `postgres_wal`, `redis`.  
+• **Database tier:** ext4 on **larger NVMe** (`/dev/nvme0n1` on aluna-node-01, ~477G 512G-class—not literal 1TB) → `/data`; create `/data/postgres`, `postgres_wal`, `redis`.  
 • **Backup tier:** partition 1TB HDD → ext4 → `/backups`.  
   **Live mapping (TASK-0001):** RAID boot = **sda + sdc**; **backup HDD = sdb** — do **not** use sdc for backups (sdc is RAID member).
 
@@ -146,7 +146,7 @@ Phase 0B storage is complete and verified. k3s can now be installed with runtime
 
 Goal:
 
-Install and stabilize single-node k3s on alethos-node-01, aligned with storage and failure-domain design.
+Install and stabilize single-node k3s on aluna-node-01, aligned with storage and failure-domain design.
 
 Scope:
 

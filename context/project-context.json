@@ -1,6 +1,6 @@
 {
   "meta": {
-    "context_name": "AlethosAPI Homelab Storage + Ops Context",
+    "context_name": "Aluna Platform Homelab Storage + Ops Context",
     "context_version": "2026-02-24",
     "status": "active",
     "project-repo": "https://github.com/davidpal3c/alethos_platform.git",
@@ -16,15 +16,16 @@
       "Corrected boot RAID1 pair to mixed-model Intel SSD Pro 1500 180GB + Intel SSD 520 180GB (both ~90% health).",
       "Added exact mdadm RAID1 partition + mount plan for Ubuntu Server.",
       "Added storage_architecture tier map with explicit mountpoints and directories.",
-      "2026-03-15 TASK-0001: Boot tier implemented on alethos-node-01. RAID1 over sda+sdc (md0\u2192/boot, md1\u2192/, md2\u2192/var), dual ESP (sda1, sdc1). NVMe and sdb (HDD) reserved for TASK-0002.",
-      "2026-03-15 TASK-0002: Platform/database/backup tiers mounted on alethos-node-01. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G 512G-class), /backups on sdb; UUID fstab + five bind mounts to /var/lib/*; ext4 all tiers.",
-      "2026-03-28 Documentation sync: Homelab_Hardware_setup.json + task specs aligned to REVIEW-TASK-0002 / BR-TASK-0002; system-blueprint and platform-overview headers cite review PASS and storage-reality delta."
+      "2026-03-15 TASK-0001: Boot tier implemented on aluna-node-01. RAID1 over sda+sdc (md0\u2192/boot, md1\u2192/, md2\u2192/var), dual ESP (sda1, sdc1). NVMe and sdb (HDD) reserved for TASK-0002.",
+      "2026-03-15 TASK-0002: Platform/database/backup tiers mounted on aluna-node-01. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G 512G-class), /backups on sdb; UUID fstab + five bind mounts to /var/lib/*; ext4 all tiers.",
+      "2026-03-28 Documentation sync: Homelab_Hardware_setup.json + task specs aligned to REVIEW-TASK-0002 / BR-TASK-0002; system-blueprint and platform-overview headers cite review PASS and storage-reality delta.",
+      "2026-03-29 Branding: Aluna platform ontology docs; hostname aluna-node-01 in repo; JSON keys device_mapping_aluna_node_01 / block_device_aluna_node_01."
     ]
   },
   "homelab_identity": {
     "primary_use": [
       "DevOps / Platform engineering flagship environment",
-      "Run AlethosAPI + workers + data services",
+      "Run Aluna Context + workers + data services",
       "Operate observability stack with SLO mindset",
       "Practice production-like reliability patterns on single-node k3s"
     ],
@@ -71,14 +72,13 @@
         "secondary": "/dev/sdc1"
       },
       "implementation_status": "implemented",
-      "device_mapping_alethos_node_01": {
+      "device_mapping_aluna_node_01": {
         "sda": "Intel SSD Pro 1500",
         "sdc": "Intel SSD 520",
         "sdb": "1TB HDD (backup tier only)"
       }
     },
     "platform_tier": {
-      "block_device_alethos_node_01": "/dev/nvme1n1",
       "model": "WD PC SN530 NVMe",
       "approx_size_gb": 238.5,
       "size_class": "~240G (smaller NVMe on this node \u2192 platform tier)",
@@ -118,10 +118,10 @@
         "/platform/containerd",
         "/platform/prometheus",
         "/platform/loki"
-      ]
+      ],
+      "block_device_aluna_node_01": "/dev/nvme1n1"
     },
     "database_tier": {
-      "block_device_alethos_node_01": "/dev/nvme0n1",
       "model": "WD PC SN530 NVMe",
       "approx_size_gb": 476.9,
       "size_class": "512G-class (not literal 1TB on this hardware)",
@@ -136,10 +136,11 @@
         "/data/postgres",
         "/data/postgres_wal",
         "/data/redis"
-      ]
+      ],
+      "block_device_aluna_node_01": "/dev/nvme0n1",
+      "label_note": "ext4 label from TASK-0002 mkfs; matches live blkid. Product data plane is Aluna Context; optional relabel to aluna-data on greenfield."
     },
     "backup_tier": {
-      "block_device_alethos_node_01": "/dev/sdb",
       "model": "WDC WD10SPZX-class 1TB SATA HDD",
       "approx_size_gb": 931.5,
       "filesystem": "ext4",
@@ -147,8 +148,9 @@
       "uuid_fstab": "bded6290-6ef8-4c02-90a2-0fff87394ba0",
       "mount": "/backups",
       "fstab_options": "defaults,nofail",
-      "critical_note": "sdc is second RAID SSD \u2014 backup tier is sdb only on alethos-node-01.",
-      "implementation_status": "implemented"
+      "critical_note": "sdc is second RAID SSD \u2014 backup tier is sdb only on aluna-node-01.",
+      "implementation_status": "implemented",
+      "block_device_aluna_node_01": "/dev/sdb"
     }
   },
   "current_storage_layout": {
@@ -346,9 +348,9 @@
     "notes": "ext4 is default for simplicity; ZFS considered if snapshot/rollback discipline is prioritized and complexity acceptable.",
     "tier_by_tier_intent": {
       "boot_tier": "ext4 RAID1 (implemented)",
-      "platform_tier": "ext4 on alethos-node-01 (implemented); ZFS remains optional for future review",
-      "database_tier": "ext4 on alethos-node-01 (implemented); ZFS remains optional for future review",
-      "backup_tier": "ext4 on alethos-node-01 (implemented)"
+      "platform_tier": "ext4 on aluna-node-01 (implemented); ZFS remains optional for future review",
+      "database_tier": "ext4 on aluna-node-01 (implemented); ZFS remains optional for future review",
+      "backup_tier": "ext4 on aluna-node-01 (implemented)"
     }
   },
   "backup_and_recovery_backlog": {
@@ -363,7 +365,7 @@
         "daily": "Keep 7 daily backups",
         "weekly": "Keep 4 weekly backups",
         "monthly": "Keep 3 monthly backups",
-        "notes": "Subject to storage capacity and AlethosAPI DB size growth."
+        "notes": "Subject to storage capacity and Aluna Context DB size growth."
       }
     },
     "wal_and_replication_simulation": {

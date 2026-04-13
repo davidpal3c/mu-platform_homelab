@@ -4,7 +4,7 @@ BR-TASK-0003 — k3s cluster bootstrap (Phase 0C)
 **Single source of truth:** This file is the canonical **operator runbook + build report** for TASK-0003 in `docs/build-reports/`.
 
 **Canonical task spec (scope, acceptance):** `tasks/TASK_0003.md`  
-**Node:** `alethos-node-01`  
+**Node:** `aluna-node-01`  
 **Dependency:** TASK-0002 complete and verified  
 **Builder role boundary:** infrastructure bootstrap only; no workload deployment, no observability stack rollout, no ingress hardening.
 
@@ -13,7 +13,7 @@ BR-TASK-0003 — k3s cluster bootstrap (Phase 0C)
 Part A — Task reference (from Planner)
 --------------------------------------
 
-**Objective:** Install and stabilize single-node k3s on `alethos-node-01`, verify storage-path alignment with existing bind mounts, create baseline namespaces, and run a PVC smoke test.
+**Objective:** Install and stabilize single-node k3s on `aluna-node-01`, verify storage-path alignment with existing bind mounts, create baseline namespaces, and run a PVC smoke test.
 
 **In-scope:**
 
@@ -32,14 +32,14 @@ Part A — Task reference (from Planner)
 
 - Observability stack deployment (TASK-0004).
 - TLS/public ingress hardening (TASK-0005).
-- Alethos API/workload deployment.
+- Aluna Context API/workload deployment.
 - HA/multi-node design.
 
 **Acceptance summary:** Node Ready, core pods healthy, namespaces exist, bind mounts still point to `/platform/*`, PVC binds and test pod mounts it, RAID unchanged.
 
 ---
 
-Part B — Operator runbook (execute on alethos-node-01)
+Part B — Operator runbook (execute on aluna-node-01)
 ------------------------------------------------------
 
 ### B.0 Preconditions and safety checks
@@ -310,7 +310,7 @@ Part C — Build report (fill during execution)
 
 ### C.1 Goal
 
-Bootstrap single-node k3s control plane on alethos-node-01 while preserving Phase 0B storage-tier isolation and runtime bind mounts.
+Bootstrap single-node k3s control plane on aluna-node-01 while preserving Phase 0B storage-tier isolation and runtime bind mounts.
 
 ### C.2 Files and systems touched
 

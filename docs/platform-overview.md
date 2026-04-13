@@ -1,6 +1,6 @@
 # Platform Overview
 
-**Purpose:** High-level view of the Alethos Platform storage and boot layout, tier separation, and operational model. Enables future agents and operators to understand platform structure and failure domains without reading implementation detail.
+**Purpose:** High-level view of the **Aluna Platform** homelab **storage and boot** layout, tier separation, and operational model. Umbrella ontology and platform diagrams: [aluna-platform/](aluna-platform/README.md). **Aluna Context** workload architecture: [aluna-context/](aluna-context/README.md).
 
 **Last updated:** 2026-03-28 (verified against `docs/build-reports/reviews/REVIEW-TASK-0002.md` **PASS**; as-built sizes and device names match `BR-TASK-0002` / `context/project-context.json`)
 
@@ -10,7 +10,7 @@
 
 ## 1. What the platform is
 
-The Alethos Platform runs on a **single-node homelab** (Lenovo ThinkStation P510, **alethos-node-01**) but is designed like a **mini production cluster**: storage and IO are separated by tier so failure domains are clear and blast radius is minimized.
+The Aluna Platform runs on a **single-node homelab** (Lenovo ThinkStation P510, **aluna-node-01**) but is designed like a **mini production cluster**: storage and IO are separated by tier so failure domains are clear and blast radius is minimized.
 
 - **OS and boot** — RAID1 on two Intel ~180GB SATA SSDs (`sda` + `sdc`).
 - **Platform workloads** (future k3s + observability data) — smaller NVMe **`nvme1n1`** (~238G) at **`/platform`**, with **bind mounts** so `/var/lib/{rancher,kubelet,containerd,prometheus,loki}` use platform disk, not the OS RAID.
@@ -34,7 +34,7 @@ This separation keeps high-churn runtime IO off the boot tier and off database d
 
 **Persistence:** Tier filesystem lines in `/etc/fstab` use **`UUID=`** and **`defaults,nofail`**. Bind mounts use **`bind,nofail`** and appear **after** the `/platform` line.
 
-**Not yet deployed:** k3s (TASK-0003), observability stack, AlethosAPI workloads.
+**Not yet deployed:** k3s (TASK-0003), observability stack, Aluna Context workloads.
 
 ---
 

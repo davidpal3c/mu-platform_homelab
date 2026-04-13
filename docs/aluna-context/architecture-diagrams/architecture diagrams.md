@@ -1,4 +1,7 @@
 1)	High-level system diagram (runtime + data plane)
+
+**Aluna mapping:** This file is **Aluna Context** workload documentation (data plane / Aluna Context API). Edge auth maps to **Aluna Access**; observability subgraph aligns with **Aluna Mira**; dashboards with **Aluna Terra**. Platform-wide ontology and cross-product diagrams: [platform-ontology.md](../../aluna-platform/platform-ontology.md) and [platform diagrams](../../aluna-platform/diagrams/README.md).
+
 Key intent (Operator-friendly):
 •	The API stays deterministic and cacheable.
 •	AI is async + paid-tier gated and never blocks core requests.
@@ -20,7 +23,7 @@ flowchart TB
 
   %% ===== Core API =====
   subgraph Core["Core API Services"]
-    API["OpenContext API (FastAPI)\n- /v1/context\n- /v1/datasets\n- /v1/health\n- auth + rate limits\n- cache-aside"]
+    API["Aluna Context API (FastAPI)\n- /v1/context\n- /v1/datasets\n- /v1/health\n- auth + rate limits\n- cache-aside"]
     Auth["API Key Service (module)\n- validate keys\n- revoke/rotate\n- tier info"]
   end
 
@@ -139,7 +142,7 @@ sequenceDiagram
   autonumber
   participant C as Client
   participant G as Ingress/WAF
-  participant A as OpenContext API (FastAPI)
+  participant A as Aluna Context API (FastAPI)
   participant R as Redis Cache
   participant P as Postgres/PostGIS
 

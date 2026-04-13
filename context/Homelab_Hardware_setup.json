@@ -2,9 +2,9 @@
   "document": {
     "type": "context_transfer",
     "scope": "homelab_setup_linux_os_storage_roles",
-    "project_name": "Alethos API Homelab (k3s + Observability + Data)",
+    "project_name": "Aluna Platform Homelab (k3s + Observability + Data)",
     "target_audience": "Another agent dedicated to homelab + Linux/OS configuration",
-    "last_updated": "2026-03-28",
+    "last_updated": "2026-03-29",
     "timezone_assumption": "America/Edmonton"
   },
   "high_level_goal": {
@@ -18,7 +18,7 @@
       "current_mode": "single-node",
       "intended_workloads": [
         "k3s Kubernetes",
-        "Alethos API (containers)",
+        "Aluna Context API (containers)",
         "Observability stack (Prometheus, Loki, Grafana, Alertmanager, exporters)",
         "Data tier (Postgres, Redis)",
         "Backups + archives"
@@ -38,7 +38,7 @@
         "model": "Intel SSD Pro 1500",
         "size": "180GB",
         "role": "boot_raid_member",
-        "notes": "RAID1 leg 1; alethos-node-01"
+        "notes": "RAID1 leg 1; aluna-node-01"
       },
       {
         "device": "sdc",
@@ -86,7 +86,7 @@
         "impact": "Lower risk of thermal throttling; better long-run stability."
       }
     },
-    "device_mapping_note": "As-built alethos-node-01 after TASK-0001/0002. Legacy drafts used sda+sdb for RAID or sdc for backup\u2014obsolete for this node."
+    "device_mapping_note": "As-built aluna-node-01 after TASK-0001/0002. Legacy drafts used sda+sdb for RAID or sdc for backup\u2014obsolete for this node."
   },
   "operating_system": {
     "distro": "Ubuntu Server (LTS recommended)",
@@ -239,7 +239,7 @@
       "goal": "Measure, alert, and debug failures like in real production"
     },
     "apps": {
-      "flagship_workload": "Alethos API (containerized)",
+      "flagship_workload": "Aluna Context API (containerized)",
       "data_services": [
         "Postgres",
         "Redis"

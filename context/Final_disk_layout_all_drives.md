@@ -1,4 +1,4 @@
-# Disk layout — alethos-node-01 (canonical, post TASK-0002)
+# Disk layout — aluna-node-01 (canonical, post TASK-0002)
 
 This file is the **authoritative summary** of the **live** storage layout after **TASK-0001** (boot RAID) and **TASK-0002** (platform / database / backup mounts + binds).  
 Detailed runbook: `docs/build-reports/BR-TASK-0002.md`.  
@@ -8,7 +8,7 @@ Structured context: `context/project-context.json`.
 
 ---
 
-## Live device roles (alethos-node-01)
+## Live device roles (aluna-node-01)
 
 | Role | Devices | Mount(s) | Notes |
 |------|---------|----------|--------|
@@ -96,4 +96,4 @@ Older planning notes that assumed:
 - RAID mirror on `sda` + **`sdb`**, or  
 - Backup tier on **`/dev/sdc1`**
 
-are **obsolete for alethos-node-01**. Always use **`lsblk -o NAME,SIZE,MODEL`** before destructive operations.
+are **obsolete for aluna-node-01**. Always use **`lsblk -o NAME,SIZE,MODEL`** before destructive operations.
