@@ -8,11 +8,11 @@
 
 ## Status: **PASS**
 
-Operator verification on **alethos-node-01** confirms the implementation matches the task specification. Documentation create/update is delegated to the Documentation Agent.
+Operator verification on **aluna-node-01** confirms the implementation matches the task specification. Documentation create/update is delegated to the Documentation Agent.
 
 ---
 
-## Operator verification result (alethos-node-01)
+## Operator verification result (aluna-node-01)
 
 **Command run:** `lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT,MODEL`
 
@@ -104,7 +104,7 @@ The **implementation on the node is correct**. For consistency and future reader
 
 ### 5.1 Device-name consistency in build report
 
-Actual hardware on alethos-node-01: **sda** = Intel SSD Pro 1500, **sdb** = 1TB HDD, **sdc** = Intel SSD 520. In the build report, any post-install or validation text that refers to the second boot SSD should use **sdc** (not sdb): e.g. `grub-install /dev/sdc`, second ESP on `/dev/sdc1`, SMART on sda and sdc, RAID members sda2/sdc2, etc. Reserve **sdb** only for the HDD.
+Actual hardware on aluna-node-01: **sda** = Intel SSD Pro 1500, **sdb** = 1TB HDD, **sdc** = Intel SSD 520. In the build report, any post-install or validation text that refers to the second boot SSD should use **sdc** (not sdb): e.g. `grub-install /dev/sdc`, second ESP on `/dev/sdc1`, SMART on sda and sdc, RAID members sda2/sdc2, etc. Reserve **sdb** only for the HDD.
 
 ### 5.2 TASK-0002 follow-up scope
 
@@ -273,7 +273,7 @@ Documentation create/update is handled by the Documentation Agent based on this 
 
 ## 9. Summary
 
-- **Correctness:** Implementation on alethos-node-01 matches task and architecture. RAID1 (sda+sdc), mountpoints, and tier separation verified via operator `lsblk`.
+- **Correctness:** Implementation on aluna-node-01 matches task and architecture. RAID1 (sda+sdc), mountpoints, and tier separation verified via operator `lsblk`.
 - **Security:** Baseline acceptable for Phase 0; harden SSH/firewall in a later task.
 - **Risks:** Mitigated by operator verification; build report text alignment (sdc for second SSD, TASK-0002 scope) recommended for future readers.
 - **Observability:** Adequate for this task; SMART and RAID status verifiable by operator.

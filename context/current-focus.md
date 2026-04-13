@@ -1,6 +1,6 @@
 # Current Focus
 
-Project: Alethos Platform Homelab  
+Project: Aluna Platform Homelab  
 Phase: Phase 0 — Platform Foundation  
 **Sub-phase (active): Phase 0C — Kubernetes Platform Bootstrap** ([roadmap](roadmap.md))
 
@@ -78,7 +78,7 @@ Future items may depend on:
 
 The following are not allowed during Phase 0:
 
-• Alethos API implementation
+• Aluna Context API implementation
 • Celery ingestion pipelines
 • AI enrichment services
 • dataset ingestion

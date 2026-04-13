@@ -1,10 +1,10 @@
 BR-TASK-0002 — Storage tier mount configuration (Phase 0B)
 ==========================================================
 
-**Single source of truth:** This file is the **only** build-report + operator runbook for TASK-0002 under `docs/build-reports/`. It records **what was implemented** on alethos-node-01 and the **repeatable procedure** for the same class of work.
+**Single source of truth:** This file is the **only** build-report + operator runbook for TASK-0002 under `docs/build-reports/`. It records **what was implemented** on aluna-node-01 and the **repeatable procedure** for the same class of work.
 
 **Canonical task spec (scope, acceptance):** `tasks/TASK_0002.md`  
-**Node:** alethos-node-01  
+**Node:** aluna-node-01  
 **Dependency:** TASK-0001 complete (RAID1 boot tier live).  
 **Build report naming:** Use `BR-TASK-XXXX.md` for formal build reports (`context/AGENTS.md` workflow). Do not modify `docs/build-reports/TASK-0001.md` as part of this task.
 
@@ -21,7 +21,7 @@ Part A — Task reference (from Planner)
 
 ---
 
-Part B — Build report (implementation record — alethos-node-01)
+Part B — Build report (implementation record — aluna-node-01)
 ---------------------------------------------------------------
 
 ### B.1 Goal (implemented)
@@ -312,7 +312,7 @@ Part E — Documentation and state updates (other agents)
 | `docs/system-blueprint.md` | Live four-tier layout, devices, bind map; optional UUIDs. |
 | `docs/platform-overview.md` | Storage summary; real sizes (~240G / ~477G / ~931G). |
 | `context/project-context.json` | `sdb` backup, `sdc` RAID, NVMe nodes, tiers implemented. |
-| `context/Final_disk_layout_all_drives.md` | Align `sdc`/`sdb` and NVMe sizes or add “alethos-node-01 live” note. |
+| `context/Final_disk_layout_all_drives.md` | Align `sdc`/`sdb` and NVMe sizes or add “aluna-node-01 live” note. |
 | `tasks/todo.md` | Mark TASK-0002 **Complete** after Reviewer + doc sync. |
 | `tasks/lessons.md` | Optional: durable rules (e.g. verify HDD identity before backup `mkfs`). |
 

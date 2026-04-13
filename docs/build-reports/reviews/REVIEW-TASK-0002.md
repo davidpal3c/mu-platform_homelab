@@ -12,13 +12,13 @@ Implementation described in **`docs/build-reports/BR-TASK-0002.md`** aligns with
 
 ---
 
-## Verification record (alethos-node-01 — per BR-TASK-0002)
+## Verification record (aluna-node-01 — per BR-TASK-0002)
 
 The following is **as recorded** in Part B of the build report (operator should retain spot-check ability using §6).
 
 ### Storage reality change (this task vs post–TASK-0001)
 
-**TASK-0002 materially changed on-disk and mount reality** on alethos-node-01. It was not documentation-only.
+**TASK-0002 materially changed on-disk and mount reality** on aluna-node-01. It was not documentation-only.
 
 | Aspect | After TASK-0001 only | After TASK-0002 (implemented) |
 |--------|---------------------|-------------------------------|
@@ -181,7 +181,7 @@ Handled per **`BR-TASK-0002.md` Part E** and `tasks/TASK_0002.md`:
 | `docs/system-blueprint.md` | Four-tier layout, devices, binds; optional UUIDs. |
 | `docs/platform-overview.md` | Storage summary; **real** NVMe sizes. |
 | `context/project-context.json` | `sdb` = backup, `sdc` = RAID; NVMe nodes; tiers implemented. |
-| `context/Final_disk_layout_all_drives.md` | Align or add “alethos-node-01 live” note (per BR). |
+| `context/Final_disk_layout_all_drives.md` | Align or add “aluna-node-01 live” note (per BR). |
 | `tasks/todo.md` | Mark TASK-0002 **Complete** after doc sync. |
 | `tasks/lessons.md` | Optional: rule “verify HDD identity before backup `mkfs`”. |
 

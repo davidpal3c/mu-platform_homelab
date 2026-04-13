@@ -1,5 +1,5 @@
 # Lessons Repository
-## Alethos Platform — Durable Engineering Knowledge
+## Aluna Platform — Durable Engineering Knowledge
 
 This file contains **durable engineering lessons** extracted from real task execution.
 
@@ -74,7 +74,7 @@ Tags:
 
 ## Phase 0: Platform Foundation
 
-Lessons **INF-001** through **INF-007** were captured from Phase 0 OS, RAID, and storage-tier work (TASK-0001, TASK-0002) on **alethos-node-01**.
+Lessons **INF-001** through **INF-007** were captured from Phase 0 OS, RAID, and storage-tier work (TASK-0001, TASK-0002) on **aluna-node-01**.
 
 ---
 
@@ -136,7 +136,7 @@ Tags:
 ## [INF-003] Define In-Scope and Out-of-Scope Devices for Follow-on Storage Tasks
 
 Context:
-TASK-0002 **implemented** this pattern on alethos-node-01: **in scope** — `nvme0n1`, `nvme1n1`, `sdb` (HDD backup); **out of scope** — `sda`, `sdc`, and `md*` (boot RAID). The task spec and `BR-TASK-0002` state this explicitly so the second RAID SSD (`sdc`) is never mistaken for a spare data disk.
+TASK-0002 **implemented** this pattern on aluna-node-01: **in scope** — `nvme0n1`, `nvme1n1`, `sdb` (HDD backup); **out of scope** — `sda`, `sdc`, and `md*` (boot RAID). The task spec and `BR-TASK-0002` state this explicitly so the second RAID SSD (`sdc`) is never mistaken for a spare data disk.
 
 Issue:
 If a follow-on task describes "all non-boot disks" without naming them, an operator might include the second boot SSD and wipe the boot mirror.
@@ -225,7 +225,7 @@ Tags:
 ## [INF-007] Verify HDD Identity Before Backup-Tier mkfs
 
 Context:
-TASK-0002: backup tier must live on the 1TB SATA HDD. On alethos-node-01 the second Intel RAID SSD is **`sdc`**, not a spare data disk — confusing **`sdb`** (HDD) with **`sdc`** (RAID) would destroy the OS mirror.
+TASK-0002: backup tier must live on the 1TB SATA HDD. On aluna-node-01 the second Intel RAID SSD is **`sdc`**, not a spare data disk — confusing **`sdb`** (HDD) with **`sdc`** (RAID) would destroy the OS mirror.
 
 Issue:
 Legacy docs sometimes placed backups on `sdc1` or described RAID across `sda`+`sdb`. Following wrong device names causes catastrophic `mkfs` or partition operations.
@@ -234,7 +234,7 @@ Root Cause:
 Kernel device enumeration (`sdX`, `nvme*n1`) is not self-explanatory; model/size must be read from the block device, not from slot assumptions.
 
 Rule:
-Before any **destructive** operation on the backup tier (or any tier), run **`lsblk -o NAME,SIZE,MODEL,TYPE`** and **`lsblk -f`**. Confirm the **HDD** by capacity and model (e.g. ~931G WDC spinner vs Intel SSD). On alethos-node-01: **backup = `/dev/sdb`**, **RAID second disk = `/dev/sdc`**. Never `mkfs` on `sda`, `sdc`, or `md*` for tier setup.
+Before any **destructive** operation on the backup tier (or any tier), run **`lsblk -o NAME,SIZE,MODEL,TYPE`** and **`lsblk -f`**. Confirm the **HDD** by capacity and model (e.g. ~931G WDC spinner vs Intel SSD). On aluna-node-01: **backup = `/dev/sdb`**, **RAID second disk = `/dev/sdc`**. Never `mkfs` on `sda`, `sdc`, or `md*` for tier setup.
 
 Verification:
 Operator checklist includes explicit device assignment (`$BACKUP_DEV=/dev/sdb`) and a hard stop if the chosen device would be a RAID member or wrong model class; `blkid` and `findmnt` match fstab UUIDs after changes.
@@ -405,7 +405,7 @@ Tags:
 ## [PROC-002] Record Measured Disk Capacity, Not Nominal Labels
 
 Context:
-TASK-0002 review: task and legacy docs referred to a "1TB" database NVMe; on alethos-node-01 the data tier device is ~476.9G (512G-class SN530).
+TASK-0002 review: task and legacy docs referred to a "1TB" database NVMe; on aluna-node-01 the data tier device is ~476.9G (512G-class SN530).
 
 Issue:
 Operators and planners underestimate or overestimate space; automation and alerts use wrong thresholds.

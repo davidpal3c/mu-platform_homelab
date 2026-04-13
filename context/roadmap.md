@@ -1,4 +1,4 @@
-# Alethos Platform Roadmap
+# Aluna Platform Roadmap
 
 Strategic sequencing for building a production-like platform in a homelab environment.
 
@@ -34,7 +34,7 @@ The platform must be able to **operate reliably before any application logic is 
 
 The first deployable milestone is reached when:
 
-Alethos API is reachable publicly via HTTPS and:
+Aluna Context API is reachable publicly via HTTPS and:
 
 • requests return deterministic responses  
 • observability is active  
@@ -268,7 +268,7 @@ docs/security/
 
 ---
 
-# Phase 3 — Minimal Alethos API Workload
+# Phase 3 — Minimal Aluna Context API Workload
 
 Objective:
 

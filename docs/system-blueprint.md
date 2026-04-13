@@ -1,6 +1,6 @@
 # System Blueprint
 
-**Purpose:** Current architecture truth for the Alethos Platform. Describes what exists, how it fits together, trust boundaries, and deployment model so that any future agent or operator can reconstruct the system.
+**Purpose:** Current architecture truth for the Aluna Platform. Describes what exists, how it fits together, trust boundaries, and deployment model so that any future agent or operator can reconstruct the system.
 
 **Last updated:** 2026-03-28 (verified against `docs/build-reports/reviews/REVIEW-TASK-0002.md` **PASS** and `docs/build-reports/BR-TASK-0002.md` live as-built record)
 
@@ -10,8 +10,9 @@
 
 ## 1. Platform identity
 
+- **Product platform:** **Aluna** (ontology: Access, Context, Mira, Terra — see [docs/aluna-platform/platform-ontology.md](aluna-platform/platform-ontology.md)). **Aluna Context** runtime architecture: [docs/aluna-context/architecture-diagrams/](aluna-context/architecture-diagrams/architecture%20diagrams.md).
 - **Machine:** Lenovo ThinkStation P510 (Xeon E5-2640 v4, 32GB RAM).
-- **Node:** alethos-node-01.
+- **Node:** aluna-node-01 (homelab; align `hostname` on the host when renaming).
 - **OS:** Ubuntu Server LTS (headless, SSH-accessible).
 - **Kubernetes:** k3s (not yet deployed; Phase 0 — next: TASK-0003).
 - **Role:** Single-node homelab designed as a "mini production cluster" via storage-tier and failure-domain separation.
@@ -20,7 +21,7 @@
 
 ## 2. Storage architecture
 
-All **four tiers** are implemented on alethos-node-01 (TASK-0001 boot + TASK-0002 platform/database/backup). Boot RAID was **not** reformatted for TASK-0002.
+All **four tiers** are implemented on aluna-node-01 (TASK-0001 boot + TASK-0002 platform/database/backup). Boot RAID was **not** reformatted for TASK-0002.
 
 ### 2.1 Boot tier (implemented — TASK-0001)
 
@@ -72,7 +73,7 @@ All **four tiers** are implemented on alethos-node-01 (TASK-0001 boot + TASK-000
 | Field | Value |
 |-------|--------|
 | **Block device** | `/dev/nvme0n1` (larger NVMe on this node, WD SN530 ~476.9G — **512G-class, not literal 1TB**) |
-| **Filesystem** | ext4, label `alethos-data` |
+| **Filesystem** | ext4, volume label `alethos-data` (set at TASK-0002 `mkfs`; matches live `blkid` — Aluna **Context** data plane; optional relabel to `aluna-data` only with care) |
 | **Mount** | `/data` |
 | **fstab** | `UUID=8650424b-1fff-4f16-80a8-43b8545f27ba` … `defaults,nofail` |
 
@@ -108,7 +109,7 @@ All **four tiers** are implemented on alethos-node-01 (TASK-0001 boot + TASK-000
 
 ## 4. Runtime and deployment model (current)
 
-- **Node:** Single physical host (alethos-node-01).
+- **Node:** Single physical host (aluna-node-01).
 - **Services:** Ubuntu Server base, OpenSSH, base tooling; storage tiers mounted at boot. **k3s not installed** until TASK-0003.
 - **Network:** DHCP on primary NIC (e.g. eno1); static IP may follow.
 - **Security baseline:** SSH enabled; hardening (keys, firewall) in later tasks.

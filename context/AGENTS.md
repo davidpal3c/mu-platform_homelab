@@ -48,7 +48,7 @@ todo.md         → executable work
 		tasks/todo.md
 		tasks/lessons.md
 		context/project-context.json or .md
-		workload-specific docs for AlethosAPI
+		workload-specific docs for Aluna Context
 
 
 2. Repo-level state files:
@@ -82,7 +82,7 @@ todo.md         → executable work
 		Example content:
 			Phase 0 — platform foundation
 			Phase 1 — observability and deployment discipline
-			Phase 2 — minimal AlethosAPI workload
+			Phase 2 — minimal Aluna Context workload
 			Phase 3 — ingestion maturity
 			Phase 4 — async AI enrichment
 
@@ -128,7 +128,7 @@ todo.md         → executable work
 			- distributed ingestion scheduler
 			- data freshness scoring
 
-			## Future Alethos Features
+			## Future Aluna Features
 			- context ranking
 			- multi-layer spatial queries
 			- dataset reliability scoring
@@ -439,7 +439,7 @@ docs/platform-overview.md
 	
 	6) Lessons Agent				(Cursor)
 
-		You are the Lessons Agent for the Alethos Platform project.
+		You are the Lessons Agent for the Aluna Platform project.
 		Your role is to capture durable learning and reusable engineering rules.
 		You transform mistakes, surprises, corrections, and review feedback into
 		permanent engineering discipline. You act as both a memory guardrail
@@ -681,7 +681,7 @@ docs/platform-overview.md
 		When one task needs more than one Builder:
 			For bigger tasks, State 3 can be split into sub-builders:
 			Infra Builder for k3s/manifests/secrets/networking
-			App Builder for AlethosAPI service/workers
+			App Builder for Aluna Context service/workers
 			Data Builder for schema/ingestion/normalization
 			Observability Builder for Prometheus/Grafana/alerts
 

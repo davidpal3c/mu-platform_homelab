@@ -1,21 +1,26 @@
-This is the stateful platform and infrastructure repo for the Aletheos ecosystem.
+# Aluna platform — operations repository
 
-This repository is the operational source of truth for the homelab platform:
-storage, Kubernetes, networking, observability, deployment patterns, and deployed workload state.
+Stateful **platform and infrastructure** repository for the **Aluna** ecosystem (control, context, awareness, and surface layers — see [docs/aluna-platform/platform-ontology.md](docs/aluna-platform/platform-ontology.md)).
 
-It is not the primary home of product source code. Product code lives in separate workload repos.
-This repo owns how workloads are deployed, operated, documented, and evolved on the platform.
+This repository is the operational source of truth for the homelab platform: storage, Kubernetes, networking, observability, deployment patterns, and deployed workload state.
 
-## The Purpose
+It is not the primary home of product application source code. Product code lives in separate workload repos. This repo owns how workloads are deployed, operated, documented, and evolved on the platform.
+
+## Purpose
 
 The platform exists to provide a production-like environment for:
 
-- running real workloads
-- validating platform engineering decisions
-- preserving infrastructure truth in-repo
-- supporting the Aletheos ecosystem as it grows
+- running real workloads  
+- validating platform engineering decisions  
+- preserving infrastructure truth in-repo  
+- supporting the **Aluna** product stack as it grows  
 
-The first major workload under this model is **Aletheos Access**.
+Ontology mapping (high level):
+
+- **Aluna Access** — first enforceable control-plane boundary (keys, policies, quotas).  
+- **Aluna Context** — meaning / geo-aware data plane (APIs, Postgres, ingestion).  
+- **Aluna Mira** — awareness (observability, interpretation, AI-assisted ops).  
+- **Aluna Terra** — surface (dashboards, maps, analytics UI).  
 
 ## Core principle
 
@@ -25,86 +30,54 @@ Project state, architecture, tasks, lessons, and deployment truth are written he
 
 ## What lives here
 
-- platform foundation:
-  - k3s
-  - networking
-  - storage
-  - observability
-- workload deployment state:
-  - manifests
-  - environment wiring
-  - runbooks
-- platform and architecture documentation
-- roadmap, tasks, lessons, and ADRs
+- Platform foundation: k3s, networking, storage, observability  
+- Workload deployment state: manifests, environment wiring, runbooks  
+- Platform and architecture documentation ([docs/aluna-platform/](docs/aluna-platform/) umbrella; [docs/aluna-context/](docs/aluna-context/) for the **Aluna Context** workload)  
+- Roadmap, tasks, lessons, and ADRs  
 
-## What you won't find here
+## What you will not find here
 
-- primary application source code for Aletheos products
-- SDK source code
-- control-plane UI source code
-- runtime service source code
+- Primary application source code for Aluna products  
+- SDK source code  
+- Control-plane UI source code  
+- Runtime service source code  
 
-Those live in separate solution repos such as `aletheos-access`.
+Those live in separate solution repos (naming may still reflect legacy project names in remotes).
 
 ## Repo layout
 
-- `context/`  
-  machine-readable and operational project state
-- `docs/`  
-  architecture, deployment, security, ADRs, engineering logs
-- `tasks/`  
-  scoped execution queue, backlog, and lessons
-- `platform/`  
-  platform primitives and infrastructure implementation
-- `workloads/`  
-  workload-specific deployment state and runbooks
-- `deployments/`  
-  cluster deployment artifacts and shared manifests
+- `context/` — machine-readable and operational project state  
+- `docs/` — architecture, deployment, engineering logs; **`docs/aluna-platform/`** (ontology + platform diagrams), **`docs/aluna-context/`** (Aluna Context runtime diagrams)  
+- `tasks/` — scoped execution queue, backlog, lessons  
+- `platform/` — platform primitives and infrastructure implementation  
+- `workloads/` — workload-specific deployment state and runbooks  
+- `deployments/` — cluster deployment artifacts and shared manifests  
 
 ## Workload model
 
-Each workload tracked here should have:
-
-- deployment notes
-- manifests or deployment references
-- environment expectations
-- operational runbooks
-
-This repo treats workloads as deployed systems, not as source-code monoliths.
-
-## Current strategic role
-
-The platform supports the Aletheos ecosystem:
-
-- **Aletheos Access** → first workload / first revenue-oriented product
-- **Aletheos Data** → future flagship data platform
-- **Aletheos Ops** → future observability/AI workload
-- **Mini-LLM** → future internal/private inference support
+Each workload tracked here should have deployment notes, manifests or references, environment expectations, and operational runbooks. Workloads are deployed systems, not a single monolithic source tree.
 
 ## Operating model
 
-This repo follows the stateful development workflow defined in `AGENTS.md`.
+This repo follows the workflow in [context/AGENTS.md](context/AGENTS.md):
 
-Meaningful infrastructure work should move through:
-
-context → task → implementation → verification → documentation/state update
+`context` → `task` → implementation → verification → documentation / state update  
 
 ## Near-term focus
 
-Support the launch of **Aletheos Access** with:
+Support **Aluna Access** and the **Aluna Context** data plane with:
 
-- stable app hosting
-- PostgreSQL
-- Redis
-- domain + TLS
-- minimal deployment reliability
-- backups
-- just-enough observability
-
-The platform should support the product, not block it.
+- stable app hosting  
+- PostgreSQL  
+- Redis  
+- domain + TLS  
+- minimal deployment reliability  
+- backups  
+- just-enough observability (foundation for **Aluna Mira**)  
 
 ## Notes
 
-- Keep platform work proportional to current workload needs.
-- Do not overbuild infrastructure before the workload proves what is needed.
-- Let real workloads drive platform maturity.
+- Keep platform work proportional to current workload needs.  
+- Do not overbuild infrastructure before workloads prove what is needed.  
+- **Hostname:** docs use **aluna-node-01**; align `/etc/hostname` and DNS when you rename the machine.  
+- **Git remote:** may remain `https://github.com/davidpal3c/alethos_platform.git` until the remote is renamed; content in this repo describes the **Aluna** platform.  
