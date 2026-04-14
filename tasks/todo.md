@@ -152,9 +152,13 @@ Scope:
 
 • install k3s control plane on Ubuntu Server node  
 • verify runtime paths resolve to `/platform`-backed bind mounts (`/var/lib/rancher`, `kubelet`, `containerd`)  
-• establish baseline namespaces: `opencontext-api`, `opencontext-data`, `opencontext-workers`, `opencontext-ai`, `observability`  
+• establish baseline namespaces: `aluna-access`, `aluna-context`, `aluna-mira`, `aluna-terra`, `observability`  
 • validate cluster networking and DNS baseline  
 • define initial local-path PV posture for single-node use (no production HA claims)
+
+Naming decision (locked for TASK-0003 execution):
+
+Use `aluna-*` namespaces only. Do not create new `opencontext-*` namespaces.
 
 Non-scope:
 
@@ -262,3 +266,45 @@ Acceptance Criteria:
 Verification:
 
 curl https://domain/health
+
+---
+
+# TASK-0006
+
+Title: Runtime naming convergence (post-bootstrap, non-destructive)
+
+Phase: Phase 1 — Observability Discipline
+
+Status: Pending
+
+Dependencies:
+
+TASK-0003
+
+Goal:
+
+Align runtime/platform naming on-node with the Aluna umbrella and Aluna Context workload naming without changing validated storage/RAID identity.
+
+Scope:
+
+• verify and normalize hostname usage to `aluna-node-01` in runbooks and operational references  
+• confirm namespace naming policy uses `aluna-*` conventions consistently  
+• audit service/config references for remaining legacy `opencontext-*` or `alethos*` runtime names and document migration steps  
+• produce explicit migration guidance for any rename that is operationally sensitive
+
+Non-scope:
+
+• destructive storage identity changes (UUID/mount source rewrites)  
+• relabeling ext4 volume `alethos-data` without approved migration + rollback plan
+
+Acceptance Criteria:
+
+• runtime naming policy is documented and consistent for active namespaces/services  
+• any remaining legacy identifiers are tracked as explicit follow-up actions with rollback notes  
+• no regression to TASK-0001/TASK-0002 validated storage state
+
+Verification:
+
+kubectl get ns  
+kubectl get all -A  
+rg "opencontext|alethos" docs tasks context
