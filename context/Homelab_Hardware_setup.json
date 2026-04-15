@@ -1,10 +1,10 @@
-   {
+{
   "document": {
     "type": "context_transfer",
     "scope": "homelab_setup_linux_os_storage_roles",
-    "project_name": "Alethos API Homelab (k3s + Observability + Data)",
+    "project_name": "Aluna Platform Homelab (k3s + Observability + Data)",
     "target_audience": "Another agent dedicated to homelab + Linux/OS configuration",
-    "last_updated": "2026-02-21",
+    "last_updated": "2026-03-29",
     "timezone_assumption": "America/Edmonton"
   },
   "high_level_goal": {
@@ -18,7 +18,7 @@
       "current_mode": "single-node",
       "intended_workloads": [
         "k3s Kubernetes",
-        "Alethos API (containers)",
+        "Aluna Context API (containers)",
         "Observability stack (Prometheus, Loki, Grafana, Alertmanager, exporters)",
         "Data tier (Postgres, Redis)",
         "Backups + archives"
@@ -37,31 +37,39 @@
         "device": "sda",
         "model": "Intel SSD Pro 1500",
         "size": "180GB",
-        "role": "boot_raid_member"
+        "role": "boot_raid_member",
+        "notes": "RAID1 leg 1; aluna-node-01"
       },
       {
-        "device": "sdb",
-        "model": "Intel SSD 520",
+        "device": "sdc",
+        "model": "Intel SSD 520 Series",
         "size": "180GB",
-        "role": "boot_raid_member"
+        "role": "boot_raid_member",
+        "notes": "RAID1 leg 2; not backup tier"
+      },
+      {
+        "device": "nvme1n1",
+        "model": "WD PC SN530",
+        "size": "~238GB",
+        "role": "platform_tier",
+        "mount": "/platform",
+        "notes": "Smaller NVMe; bind mounts to /var/lib/*"
       },
       {
         "device": "nvme0n1",
         "model": "WD PC SN530",
-        "size": "240GB",
-        "role": "platform_tier"
+        "size": "~477GB (512G-class)",
+        "role": "database_tier",
+        "mount": "/data",
+        "notes": "Larger NVMe on this node; not literal 1TB"
       },
       {
-        "device": "nvme1n1",
-        "model": "NVMe",
-        "size": "1TB",
-        "role": "database_tier"
-      },
-      {
-        "device": "sdc",
-        "model": "SATA HDD",
-        "size": "1TB",
-        "role": "backup_tier"
+        "device": "sdb",
+        "model": "WDC WD10SPZX-class SATA HDD",
+        "size": "~931GB",
+        "role": "backup_tier",
+        "mount": "/backups",
+        "notes": "Backup tier; sdc is RAID member"
       }
     ],
     "constraints_and_assumptions": {
@@ -77,7 +85,8 @@
         "nvme_adapters": "PCIe M.2 adapters with heatsinks are preferred for sustained writes (metrics/logging/DB WAL).",
         "impact": "Lower risk of thermal throttling; better long-run stability."
       }
-    }
+    },
+    "device_mapping_note": "As-built aluna-node-01 after TASK-0001/0002. Legacy drafts used sda+sdb for RAID or sdc for backup\u2014obsolete for this node."
   },
   "operating_system": {
     "distro": "Ubuntu Server (LTS recommended)",
@@ -110,19 +119,19 @@
       },
       {
         "layer": "Platform Tier (Kubernetes + Observability)",
-        "runs_on": "WD PC SN530 240GB NVMe",
+        "runs_on": "/dev/nvme1n1 WD SN530 ~238GB (platform tier; smaller NVMe)",
         "purpose": "Container runtime storage + monitoring/logging persistence",
         "principle": "High IOPS + high write endurance usage belongs on NVMe"
       },
       {
         "layer": "Data Tier (Databases)",
-        "runs_on": "1TB NVMe",
+        "runs_on": "/dev/nvme0n1 WD SN530 ~477GB 512G-class (database tier; larger NVMe)",
         "purpose": "Postgres + Redis + WAL on fast dedicated media",
         "principle": "Avoid contention; preserve predictable DB performance"
       },
       {
         "layer": "Backup / Archive Tier",
-        "runs_on": "1TB HDD",
+        "runs_on": "/dev/sdb ~931GB SATA HDD (not sdc)",
         "purpose": "Backups, snapshots exports, long retention logs/archives",
         "principle": "Capacity-oriented; not latency-sensitive"
       }
@@ -141,79 +150,65 @@
     "summary": "Each drive has a specific operational responsibility to reduce contention, simplify recovery, and tell a strong DevOps story.",
     "drive_roles_and_justification": [
       {
-        "drive": "Intel 520 Series 240GB SATA SSD",
-        "role": "Boot drive + OS + k3s binaries (system drive)",
+        "drive": "Boot RAID1: Intel SSD Pro 1500 + Intel SSD 520 (180GB each, sda + sdc)",
+        "role": "OS, /boot, /var on mdadm; dual ESP",
         "what_lives_here": [
-          "Ubuntu Server OS partitions",
-          "System packages",
-          "k3s binaries and systemd services",
-          "Minimal logs (journald/logrotate default) but not heavy application logs"
+          "Ubuntu Server",
+          "system packages",
+          "bounded OS logs on md-backed /var (high-churn app paths bind-mounted off RAID)"
         ],
         "why": [
-          "Stable boot path and straightforward recovery.",
-          "Keeps OS isolated from high-write application and telemetry data.",
-          "Reduces risk that runaway metrics/logs fill up the OS disk."
+          "Resilience and recovery",
+          "Isolate OS from platform/database IO"
         ],
         "positive_impact": [
-          "Faster incident recovery: OS disk remains predictable.",
-          "Cleaner upgrades/patching and easier rollback strategies.",
-          "Lower risk of cluster downtime caused by OS disk exhaustion."
+          "Single SSD failure tolerated by RAID1",
+          "Clear boot path"
         ]
       },
       {
-        "drive": "WD PC SN530 240GB NVMe",
-        "role": "Platform tier: k3s runtime storage + observability persistence",
+        "drive": "/dev/nvme1n1 \u2014 WD SN530 ~238GB (platform tier)",
+        "role": "k3s runtime + observability persistence",
         "what_lives_here": [
-          "Container runtime data directory (e.g., /var/lib/rancher/k3s or equivalent path relocation)",
-          "Persistent volumes for observability components (Prometheus TSDB, Loki chunks/index, Grafana storage as needed)",
-          "High-churn logs/metrics data"
+          "/platform; bind sources for /var/lib/rancher, kubelet, containerd, prometheus, loki"
         ],
         "why": [
-          "Metrics/logging is write-heavy; NVMe handles high IOPS and sustained writes better than SATA/HDD.",
-          "Separates platform churn from OS stability and DB performance."
+          "High write churn belongs on dedicated NVMe",
+          "Keeps md-backed /var from filling"
         ],
         "positive_impact": [
-          "More reliable Prometheus/Loki performance (fewer ingestion bottlenecks).",
-          "Improved platform resilience and easier capacity management.",
-          "Cleaner troubleshooting: platform disk alerts are isolated and actionable."
+          "Predictable platform capacity",
+          "Isolated failure domain"
         ]
       },
       {
-        "drive": "1TB NVMe",
-        "role": "Database tier: Postgres + Redis + WAL",
+        "drive": "/dev/nvme0n1 \u2014 WD SN530 ~477GB 512G-class (database tier)",
+        "role": "Postgres + Redis + WAL",
         "what_lives_here": [
-          "Postgres data directory",
-          "Postgres WAL (either colocated or intentionally placed here to avoid OS/platform disks)",
-          "Redis persistence (AOF/RDB) if enabled",
-          "Any other stateful app data requiring low latency"
+          "/data/postgres",
+          "/data/postgres_wal",
+          "/data/redis"
         ],
         "why": [
-          "DB + WAL are latency-sensitive and write-intensive; dedicated NVMe reduces tail latency and contention.",
-          "Separating DB I/O from observability ingestion avoids performance cliffs."
+          "Low-latency DB IO separate from observability ingestion"
         ],
         "positive_impact": [
-          "Predictable query performance and faster recovery/repairs.",
-          "Reduced risk of noisy-neighbor effects from logs/metrics pipelines.",
-          "Stronger 'realistic platform ops' story (data tier treated seriously)."
+          "Capacity planning uses ~477G on this hardware, not nominal 1TB"
         ]
       },
       {
-        "drive": "1TB HDD",
+        "drive": "/dev/sdb \u2014 ~931GB SATA HDD",
         "role": "Backups + archives",
         "what_lives_here": [
-          "Database backups (logical + physical strategies depending on tooling)",
-          "Exported snapshots and retention copies",
-          "Compressed archives of logs/artifacts if needed",
-          "Optional local 'cold storage' for large files/datasets"
+          "Database dumps",
+          "snapshot exports",
+          "long-retention archives"
         ],
         "why": [
-          "Backups are capacity-oriented and sequential; HDD is cost-effective for retention.",
-          "Separates backups from failure modes of the hot tiers (NVMe wear, file system corruption, etc.)."
+          "Separate physical medium; sdc is RAID\u2014not backup"
         ],
         "positive_impact": [
-          "Improved resilience: local restore path even if NVMe tiers fail.",
-          "Supports operational maturity: backup rotation and retention policies.",
-          "Clear auditability: backup artifacts stored in a designated tier."
+          "Backups do not compete with live NVMe tiers"
         ]
       }
     ],
@@ -244,7 +239,7 @@
       "goal": "Measure, alert, and debug failures like in real production"
     },
     "apps": {
-      "flagship_workload": "Alethos API (containerized)",
+      "flagship_workload": "Aluna Context API (containerized)",
       "data_services": [
         "Postgres",
         "Redis"
@@ -306,12 +301,11 @@
   },
   "handoff_notes_for_next_agent": {
     "what_to_focus_on_next": [
-      "Ubuntu Server installation plan (partitioning + mounts by UUID).",
-      "Filesystem choices and mount options for each tier.",
-      "Relocating k3s/container runtime directories to the platform NVMe.",
-      "PersistentVolume strategy aligned to physical disks.",
-      "Backup tooling selection and test restore procedure.",
-      "Baseline security hardening (SSH keys, firewall, fail2ban optional)."
+      "TASK-0003: k3s install; ensure runtime uses existing /platform bind mounts",
+      "PersistentVolume strategy aligned to /data and /platform",
+      "Backup tooling + test restore procedure",
+      "Disk usage alerting when observability stack is deployed",
+      "Baseline security hardening (SSH keys, firewall, fail2ban optional)"
     ],
     "guardrails": [
       "Keep server headless; do not install desktop environment.",

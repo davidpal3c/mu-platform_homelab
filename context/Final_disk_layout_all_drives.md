@@ -1,275 +1,99 @@
-# Final Expected Disk Layout (All Drives)
+# Disk layout — aluna-node-01 (canonical, post TASK-0002)
 
-## Boot Tier — RAID1 SATA SSDs
+This file is the **authoritative summary** of the **live** storage layout after **TASK-0001** (boot RAID) and **TASK-0002** (platform / database / backup mounts + binds).  
+Detailed runbook: `docs/build-reports/BR-TASK-0002.md`.  
+Structured context: `context/project-context.json`.
 
-Two drives:
-
-- Intel SSD Pro 1500 — 180GB  
-- Intel SSD 520 — 180GB  
-
-These mirror the OS using **mdadm**. :contentReference[oaicite:0]{index=0}
+**Danger:** Older drafts in version control may have shown RAID on `sda`+`sdb` or backups on `sdc`. **On this node that is wrong** — see the table below before any `mkfs` or partition work.
 
 ---
 
-# Use Dual EFI Partitions (Not One)
+## Live device roles (aluna-node-01)
 
-Earlier approach:
-/dev/sda1 → /boot/efi
-/dev/sdb1 → backup EFI
-
-Better approach:
-/dev/sda1 → EFI
-/dev/sdb1 → EFI
-
-Both disks contain their own **active EFI partition**, and **GRUB is installed on both disks**.
-
-### Why this is better
-
-- If disk A dies → system still boots from disk B  
-- No manual EFI syncing required  
-- Cleaner recovery  
-
-This is the standard pattern used in **production Linux RAID boot setups**. :contentReference[oaicite:1]{index=1}
+| Role | Devices | Mount(s) | Notes |
+|------|---------|----------|--------|
+| Boot RAID1 | **`/dev/sda`** + **`/dev/sdc`** (Intel SSDs) | `/boot/efi` (sda1), `/boot` (md0), `/` (md1), `/var` (md2) | **Never** format `sda`/`sdc`/`md*` for tier work. |
+| Platform | **`/dev/nvme1n1`** (~238G SN530) | `/platform` | ext4, label `platform`. May be whole-disk ext4 (no `p1`) — UUID in fstab must match `blkid`. |
+| Database | **`/dev/nvme0n1`** (~477G SN530, 512G-class) | `/data` | ext4, label `alethos-data`. Smaller NVMe is **not** DB on this node — larger is DB. |
+| Backup | **`/dev/sdb`** (~931G HDD) | `/backups` | ext4, label `backups`. **`sdc` is RAID — not backup.** |
 
 ---
 
-# Updated Boot Tier Layout
+## UUIDs (`/etc/fstab` — confirm on node with `blkid`)
 
-Per disk (`sda` and `sdb`):
-512M EFI System Partition
-2G RAID member (/boot)
-50G RAID member (/)
-rest RAID member (/var)
+| Mount | UUID | Label |
+|-------|------|--------|
+| `/platform` | `70a566e7-4834-48a3-8b5a-a97fc0383488` | `platform` |
+| `/data` | `8650424b-1fff-4f16-80a8-43b8545f27ba` | `alethos-data` |
+| `/backups` | `bded6290-6ef8-4c02-90a2-0fff87394ba0` | `backups` |
 
-### RAID arrays
-/dev/md0 → /boot
-/dev/md1 → /
-/dev/md2 → /var
-
-### EFI
-/dev/sda1 → /boot/efi
-/dev/sdb1 → secondary EFI (bootable)
-
-Both disks contain a **full bootloader**. :contentReference[oaicite:2]{index=2}
+Boot lines may use installer `by-id`; tier lines should use **`UUID=`** only.
 
 ---
 
-# Important Installer Tip
+## Bind mounts (require `/platform` mounted first)
 
-During Ubuntu install:
+| Source | Target |
+|--------|--------|
+| `/platform/rancher` | `/var/lib/rancher` |
+| `/platform/kubelet` | `/var/lib/kubelet` |
+| `/platform/containerd` | `/var/lib/containerd` |
+| `/platform/prometheus` | `/var/lib/prometheus` |
+| `/platform/loki` | `/var/lib/loki` |
 
-Assign **only one EFI partition**:
-/boot/efi → sda1
-
-Leave `sdb1` unused temporarily.
-
-After installation, install GRUB on both disks.
+Options: `bind,nofail` in `/etc/fstab`.
 
 ---
 
-# Post-Install Step (Critical)
+## Directory layout
 
-After the first boot run:
+**Under `/data`:** `postgres`, `postgres_wal`, `redis`  
+**Under `/platform`:** `rancher`, `kubelet`, `containerd`, `prometheus`, `loki`  
+**Under `/backups`:** operator-defined dumps/archives (no hot DB data)
 
-```bash
-sudo grub-install /dev/sda
-sudo grub-install /dev/sdb
-sudo update-grub
+---
+
+## Boot tier detail (RAID + EFI)
+
+Per **boot** disk (`sda` and `sdc` only):
+
+- `p1`: 512MiB ESP (FAT32) — primary mount `sda1` → `/boot/efi`; `sdc1` secondary ESP  
+- `p2`: 2GiB → md0 → `/boot`  
+- `p3`: 50GiB → md1 → `/`  
+- `p4`: remainder → md2 → `/var`  
+
+`grub-install` on **both** `/dev/sda` and `/dev/sdc`. Sync secondary ESP after kernel/GRUB updates (`tasks/lessons.md` — INF-006).
+
+---
+
+## Visual summary
+
+```
+  RAID1 BOOT (sda + sdc)          nvme1n1          nvme0n1           sdb
+  md0 /boot  md1 /  md2 /var  →  /platform    →   /data         →   /backups
+                                      │               │
+                                      └── bind ──→ /var/lib/{rancher,kubelet,containerd,prometheus,loki}
 ```
 
-## Mount second EFI:
-sudo mkdir /mnt/efi2
-sudo mount /dev/sdb1 /mnt/efi2
+---
 
+## Operational checks
 
-## Copy bootloader:
-sudo rsync -av /boot/efi/ /mnt/efi2/
+```bash
+lsblk -f
+grep -v '^#' /etc/fstab | grep -v '^$'
+findmnt -A | grep -E 'platform|/data|backups|rancher|kubelet|containerd|prometheus|loki'
+df -h /platform /data /backups
+cat /proc/mdstat
+```
 
+---
 
-## Unmount:
-sudo umount /mnt/efi2
-Now both disks are bootable. 
+## Legacy / superseded content
 
-Resulting Boot Resilience
-If /dev/sda fails:
-BIOS loads EFI from /dev/sdb1
-GRUB loads kernel
-RAID continues degraded
-System still boots
-You can replace the failed disk later and rebuild RAID. 
+Older planning notes that assumed:
 
-Another Small Improvement (Very Worth It)
-Before installing Ubuntu, wipe disks completely.
-From installer shell (Ctrl + Alt + F2):
-sudo wipefs -a /dev/sda
-sudo wipefs -a /dev/sdb
-This avoids:
-old RAID metadata
-ghost partitions
-installer confusion 
+- RAID mirror on `sda` + **`sdb`**, or  
+- Backup tier on **`/dev/sdc1`**
 
-Final Boot Tier Layout (Clean Version)
-Disk sda
----------
-sda1  512M   EFI
-sda2  2G     RAID (/boot)
-sda3  50G    RAID (/)
-sda4  rest   RAID (/var)
-
-Disk sdb
----------
-sdb1  512M   EFI
-sdb2  2G     RAID (/boot)
-sdb3  50G    RAID (/)
-sdb4  rest   RAID (/var)
-RAID arrays
-md0 → /boot
-md1 → /
-md2 → /var
-This boot setup enforces the first failure domain: Boot tier resilience. 
-
-Platform Tier — 240GB NVMe
-Drive:
-WD PC SN530 NVMe 240GB
-Expected device:
-/dev/nvme0n1
-Partition layout:
-/dev/nvme0n1p1
-Filesystem:
-ext4
-Mount:
-/platform
-Platform Directories
-/platform/rancher
-/platform/kubelet
-/platform/containerd
-/platform/prometheus
-/platform/loki
-Bind mounts:
-/platform/rancher      → /var/lib/rancher
-/platform/kubelet      → /var/lib/kubelet
-/platform/containerd   → /var/lib/containerd
-/platform/prometheus   → /var/lib/prometheus
-/platform/loki         → /var/lib/loki
-Purpose:
-high-write workloads
-metrics
-logs
-container runtime
-Isolation protects the OS disk. 
-
-Database Tier — 1TB NVMe
-Drive:
-1TB NVMe
-Expected device:
-/dev/nvme1n1
-Partition:
-/dev/nvme1n1p1
-Filesystem:
-ext4
-Mount:
-/data
-Database directories
-/data/postgres
-/data/postgres_wal
-/data/redis
-Purpose:
-stateful workloads
-low latency storage
-DB + WAL isolation
-Mount separation prepares for future disk-level WAL separation. 
-
-Backup Tier — 1TB HDD
-Drive:
-1TB SATA HDD
-Expected device:
-/dev/sdc
-Partition:
-/dev/sdc1
-Filesystem:
-ext4
-Mount:
-/backups
-Purpose:
-database dumps
-snapshot exports
-retention archives
-Backups must not compete with live workloads. 
-
-Complete Mount Layout Summary
-BOOT RAID
-/dev/md0  → /boot
-/dev/md1  → /
-/dev/md2  → /var
-EFI
-/dev/sda1 → /boot/efi
-/dev/sdb1 → backup EFI
-PLATFORM TIER (240GB NVMe)
-/dev/nvme0n1p1 → /platform
-Bind mounts:
-/platform/rancher      → /var/lib/rancher
-/platform/kubelet      → /var/lib/kubelet
-/platform/containerd   → /var/lib/containerd
-/platform/prometheus   → /var/lib/prometheus
-/platform/loki         → /var/lib/loki
-DATABASE TIER (1TB NVMe)
-/dev/nvme1n1p1 → /data
-/data/postgres
-/data/postgres_wal
-/data/redis
-BACKUP TIER (1TB HDD)
-/dev/sdc1 → /backups
-Visual Overview
-            RAID1 BOOT TIER
-      +---------------------------+
-      | Intel SSD 180GB (sda)     |
-      | Intel SSD 180GB (sdb)     |
-      +---------------------------+
-
-        md0 → /boot
-        md1 → /
-        md2 → /var
-
-
-          PLATFORM NVMe
-      +--------------------+
-      | 240GB NVMe         |
-      +--------------------+
-
-        /platform
-        ├─ rancher
-        ├─ kubelet
-        ├─ containerd
-        ├─ prometheus
-        └─ loki
-
-
-           DATABASE NVMe
-      +--------------------+
-      | 1TB NVMe           |
-      +--------------------+
-
-        /data
-        ├─ postgres
-        ├─ postgres_wal
-        └─ redis
-
-
-           BACKUP HDD
-      +--------------------+
-      | 1TB HDD            |
-      +--------------------+
-
-        /backups
-Why This Layout Is Excellent (Architecturally)
-This layout enforces four separate failure domains:
-OS
-Platform runtime
-Database
-Backups
-This mirrors mini production cluster architecture, far superior to typical homelab designs where everything shares one disk. 
-
-The homelab is intentionally structured as a mini production platform with:
-isolated storage tiers
-failure-domain separation
-recoverable infrastructure
+are **obsolete for aluna-node-01**. Always use **`lsblk -o NAME,SIZE,MODEL`** before destructive operations.

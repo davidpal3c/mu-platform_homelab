@@ -1,4 +1,4 @@
-# Alethos Platform Roadmap
+# Aluna Platform Roadmap
 
 Strategic sequencing for building a production-like platform in a homelab environment.
 
@@ -34,7 +34,7 @@ The platform must be able to **operate reliably before any application logic is 
 
 The first deployable milestone is reached when:
 
-Alethos API is reachable publicly via HTTPS and:
+Aluna Context API is reachable publicly via HTTPS and:
 
 • requests return deterministic responses  
 • observability is active  
@@ -268,7 +268,7 @@ docs/security/
 
 ---
 
-# Phase 3 — Minimal Alethos API Workload
+# Phase 3 — Minimal Aluna Context API Workload
 
 Objective:
 
@@ -397,12 +397,14 @@ These belong to **post-MVP evolution**.
 
 Phase 0 — Platform Foundation
 
-The system is currently focused on:
+**Phase 0A — Hardware + OS baseline:** **complete.**  
+Ubuntu Server (headless), UEFI, mdadm RAID1 boot tier, dual ESP, SSH. TASK-0001 closed.
 
-• hardware preparation  
-• storage layout  
-• OS installation  
-• Kubernetes bootstrap
+**Phase 0B — Storage architecture:** **complete.**  
+`/platform`, `/data`, `/backups`, UUID `fstab`, bind mounts for platform runtime paths. TASK-0002 closed.
+
+**Phase 0C — Kubernetes platform bootstrap:** **active.**  
+Install and stabilize k3s; ensure container runtime and kubelet data use platform-tier bind mounts (TASK-0003). Baseline Kubernetes namespaces for this task are locked to: **`aluna-access`**, **`aluna-context`**, **`aluna-mira`**, **`aluna-terra`**, **`observability`** — do not introduce new **`opencontext-*`** namespaces during bootstrap.
 
 No application workloads should be implemented yet.
 
@@ -410,13 +412,14 @@ No application workloads should be implemented yet.
 
 # Allowed Work Right Now
 
-Infrastructure only:
+Infrastructure only (Phase 0C emphasis):
 
-• hardware configuration  
-• OS installation  
-• filesystem layout  
-• storage mounts  
-• k3s bootstrap planning  
+• **k3s installation and verification** — `kubectl`, node Ready, basic networking  
+• **Runtime alignment** — k3s/containerd/kubelet data on existing `/platform` bind mounts per `context/project-context.json` and `tasks/TASK_0002.md`  
+• **Namespaces / cluster baseline** as scoped in TASK-0003  
+• **Documentation** — build report and blueprint updates when TASK-0003 completes  
+
+Deferred until TASK-0003 is accepted: production-style ingress/TLS (TASK-0005), full observability stack install (TASK-0004 / Phase 1). Planning those remains allowed.
 
 ---
 

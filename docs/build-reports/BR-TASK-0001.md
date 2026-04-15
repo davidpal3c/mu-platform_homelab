@@ -90,7 +90,7 @@ Decisions Made
 Commands Executed
 -----------------
 
-This section lists the representative commands the Operator is expected to have run, in approximate order. On alethos-node-01 the boot SSDs are `sda` and `sdc`; `sdb` is the HDD. NIC name may vary.
+This section lists the representative commands the Operator is expected to have run, in approximate order. On aluna-node-01 the boot SSDs are `sda` and `sdc`; `sdb` is the HDD. NIC name may vary.
 
 Installer environment (before partitioning):
 

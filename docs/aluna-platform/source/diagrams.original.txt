@@ -1,0 +1,218 @@
+1. ONTOLOGY - PRODUCT - INFRASTRUCTURE MAPPING
+
+
+flowchart TD
+    A[Aluna\nPre-Execution Decision Layer] --> B[Aluna Access\nControl Layer]
+    A --> C[Aluna Context\nMeaning Layer]
+    A --> D[Aluna Mira\nAwareness Layer]
+    A --> E[Aluna Terra\nSurface Layer]
+
+    B --> B1[Auth / API Keys]
+    B --> B2[Policy Enforcement]
+    B --> B3[Rate Limits / Quotas]
+    B --> B4[Plans / Monetization]
+
+    C --> C1[Geo-aware Data APIs]
+    C --> C2[Context Enrichment]
+    C --> C3[Normalized External Data]
+    C --> C4[Context Query Layer]
+
+    D --> D1[Logs / Metrics / Events]
+    D --> D2[Anomaly Detection]
+    D --> D3[AI-assisted Interpretation]
+    D --> D4[Operational Guidance]
+
+    E --> E1[Geo Dashboards]
+    E --> E2[Maps / Spatial UI]
+    E --> E3[Business-facing Analytics]
+    E --> E4[Exploration Interfaces]
+
+
+
+2. PLATFORM LAYERING DIAGRAM 
+
+flowchart TB
+    U[Clients / Developers / Internal Services]
+
+    U --> G[Aluna Access]
+    G --> X[Protected APIs / Services]
+
+    X --> C[Aluna Context]
+    C --> DS[(Context Data Stores)]
+    C --> EX[External Data Sources]
+
+    X --> M[Aluna Mira]
+    M --> OBS[(Logs / Metrics / Events)]
+    M --> AI[AI Analysis / Insight Engine]
+
+    C --> T[Aluna Terra]
+    M --> T
+    T --> UI[Geo Analytics / Dashboard / Visualization]
+
+
+
+3. REQUEST LIFECYCLE DIAGRAM 
+sequenceDiagram
+    participant Client
+    participant Access as Aluna Access
+    participant API as Protected API
+    participant Context as Aluna Context
+    participant Mira as Aluna Mira
+    participant Terra as Aluna Terra
+
+    Client->>Access: API request with key / credentials
+    Access->>Access: Validate identity, policy, limits, plan
+    Access-->>Client: Reject if unauthorized / over quota
+    Access->>API: Forward permitted request
+
+    API->>Context: Query contextual / geo-aware data
+    Context-->>API: Return structured context
+
+    API-->>Client: Return application response
+
+    API->>Mira: Emit logs / usage / operational events
+    Context->>Mira: Emit contextual signals
+    Mira->>Mira: Analyze patterns / detect anomalies
+
+    Mira->>Terra: Feed interpreted data
+    Context->>Terra: Feed geo/context data
+    Terra-->>Client: Visual dashboards / maps / insights
+
+
+
+4. PRODUCT EVOLUTION DIAGRAM
+
+flowchart LR
+    A1[Phase 1\nAluna Access] --> A2[Phase 2\nAluna Context]
+    A2 --> A3[Phase 3\nAluna Mira]
+    A3 --> A4[Phase 4\nAluna Terra]
+
+    A1 --> I1[Control Plane\nKeys, policies, quotas, plans]
+    A2 --> I2[Context Platform\nGeo-aware data APIs, enrichment]
+    A3 --> I3[Awareness Layer\nObservability, anomaly detection, AI ops]
+    A4 --> I4[Surface Layer\nDashboards, maps, analytics UI]
+
+
+
+
+5. RUNTIME / INFRASTRUCTURE ARCHITECTURE 
+
+flowchart TB
+    subgraph Clients
+        DEV[Developers / Customer Apps]
+        INT[Internal Services]
+        UI[Admin / Product UI]
+    end
+
+    subgraph Edge
+        LB[Ingress / Edge Proxy]
+    end
+
+    subgraph ControlPlane[Aluna Access]
+        ACC_API[Access API / Control API]
+        ACC_RT[Access Runtime Enforcement]
+        ACC_REDIS[(Redis\nrate limits / cache)]
+        ACC_DB[(Postgres\nprojects, keys, policies, plans, usage)]
+    end
+
+    subgraph ContextPlane[Aluna Context]
+        CTX_API[Context API]
+        CTX_PIPE[Context Ingestion / Normalization]
+        CTX_DB[(Context Store\ngeo / normalized datasets)]
+        EXT[External Geo / Context Providers]
+    end
+
+    subgraph AwarenessPlane[Aluna Mira]
+        MIRA_COL[Telemetry Collection]
+        MIRA_PROC[Detection / Interpretation Engine]
+        MIRA_AI[AI-assisted Ops Reasoning]
+        OBS[(Metrics / Logs / Events Store)]
+    end
+
+    subgraph SurfacePlane[Aluna Terra]
+        TERRA_UI[Geo Analytics UI]
+        TERRA_API[Presentation API]
+    end
+
+    DEV --> LB
+    INT --> LB
+    UI --> LB
+
+    LB --> ACC_RT
+    UI --> ACC_API
+
+    ACC_RT --> ACC_REDIS
+    ACC_RT --> ACC_DB
+    ACC_RT --> CTX_API
+
+    CTX_API --> CTX_DB
+    CTX_PIPE --> CTX_DB
+    EXT --> CTX_PIPE
+
+    ACC_RT --> MIRA_COL
+    CTX_API --> MIRA_COL
+    ACC_API --> MIRA_COL
+
+    MIRA_COL --> OBS
+    MIRA_COL --> MIRA_PROC
+    MIRA_PROC --> MIRA_AI
+
+    TERRA_UI --> TERRA_API
+    TERRA_API --> CTX_API
+    TERRA_API --> MIRA_PROC
+    TERRA_API --> OBS
+
+
+
+6. Ontology → Infrastructure Responsibility Matrix
+
+| Ontology Layer | Product       | Primary Technical Responsibility                     | Core Infra Components                                        |
+| -------------- | ------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| Control        | Aluna Access  | identity, policy, quota, monetization enforcement    | API runtime, Postgres, Redis, control API                    |
+| Meaning        | Aluna Context | normalized contextual and geo-aware data APIs        | ingestion workers, external providers, context store         |
+| Awareness      | Aluna Mira    | telemetry interpretation and AI-assisted ops insight | logs/metrics/events pipeline, detection engine, AI reasoning |
+| Surface        | Aluna Terra   | visual exploration and geo analytics UI              | dashboard frontend, presentation API, map/data rendering     |
+
+
+
+7. MINIMAL MVP ARCHITECTURE
+
+
+flowchart TB
+    Client[Developer / App Client] --> Access[Aluna Access]
+
+    Access --> AccessDB[(Postgres)]
+    Access --> Redis[(Redis)]
+
+    Access --> ProtectedAPI[Protected API / Customer Service]
+
+    ProtectedAPI -.future dogfooding.-> Context[Aluna Context]
+    Access -.future telemetry.-> Mira[Aluna Mira]
+    Context -.future presentation.-> Terra[Aluna Terra]
+
+
+
+
+
+
+
+ARCHITECTURAL READING
+
+These diagrams establish a consistent model:
+
+Aluna Access is the first enforceable runtime boundary.
+Aluna Context becomes the structured reality layer that applications and analytics depend on.
+Aluna Mira turns operational exhaust into understanding and guidance.
+Aluna Terra becomes the human-facing exploration surface for context and insight.
+
+This gives you a clean progression from:
+
+permission
+to meaning
+to awareness
+to visibility
+
+
+
+
+

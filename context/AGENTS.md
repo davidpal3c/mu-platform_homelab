@@ -48,7 +48,7 @@ todo.md         → executable work
 		tasks/todo.md
 		tasks/lessons.md
 		context/project-context.json or .md
-		workload-specific docs for AlethosAPI
+		workload-specific docs for Aluna Context
 
 
 2. Repo-level state files:
@@ -82,7 +82,7 @@ todo.md         → executable work
 		Example content:
 			Phase 0 — platform foundation
 			Phase 1 — observability and deployment discipline
-			Phase 2 — minimal AlethosAPI workload
+			Phase 2 — minimal Aluna Context workload
 			Phase 3 — ingestion maturity
 			Phase 4 — async AI enrichment
 
@@ -128,7 +128,7 @@ todo.md         → executable work
 			- distributed ingestion scheduler
 			- data freshness scoring
 
-			## Future Alethos Features
+			## Future Aluna Features
 			- context ranking
 			- multi-layer spatial queries
 			- dataset reliability scoring
@@ -224,7 +224,7 @@ todo.md         → executable work
 
 
 		
-	1) Context Curator Agent		(ChatGPT)
+	1) Context Curator Agent		(Cursor)
 
 		Reads:
 			context/project-context.json
@@ -252,7 +252,7 @@ todo.md         → executable work
 			identify which lessons and ADRs apply
 
 
-	2) Planner Agent			(ChatGPT)
+	2) Planner Agent			(Cursor)
 
 		Purpose:
 			Own the transition from strategy to execution
@@ -333,7 +333,7 @@ todo.md         → executable work
 					docs that must be updated
 
 
-# TASK-001 Implementation Report
+# TASK-000x Implementation Report (sample)
 
 ## Goal
 Bootstrap k3s platform foundation.
@@ -439,7 +439,7 @@ docs/platform-overview.md
 	
 	6) Lessons Agent				(Cursor)
 
-		You are the Lessons Agent for the Alethos Platform project.
+		You are the Lessons Agent for the Aluna Platform project.
 		Your role is to capture durable learning and reusable engineering rules.
 		You transform mistakes, surprises, corrections, and review feedback into
 		permanent engineering discipline. You act as both a memory guardrail
@@ -647,7 +647,6 @@ docs/platform-overview.md
 			(This goes into tasks/todo.md)
 
 
-
 	State 4 — Implementation		
 
 		Purpose:
@@ -682,9 +681,10 @@ docs/platform-overview.md
 		When one task needs more than one Builder:
 			For bigger tasks, State 3 can be split into sub-builders:
 			Infra Builder for k3s/manifests/secrets/networking
-			App Builder for AlethosAPI service/workers
+			App Builder for Aluna Context service/workers
 			Data Builder for schema/ingestion/normalization
 			Observability Builder for Prometheus/Grafana/alerts
+
 
 		But they should still all work from the same task spec and converge back into one verification state (State 4)
 
@@ -734,6 +734,7 @@ docs/platform-overview.md
 
 
 
+
 	State 6 — Project State Sync
 	
 		Purpose: 
@@ -771,6 +772,7 @@ docs/platform-overview.md
 		This is the most important anti-drift state. 
 
 	
+
 
 	State 7 — Learning Captured
 
