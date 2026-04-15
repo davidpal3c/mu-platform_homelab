@@ -54,7 +54,7 @@ TASK-0002 — Storage tier mount configuration ([tasks/TASK_0002.md](../tasks/TA
 
 **Immediate focus**
 
-TASK-0003 — k3s cluster bootstrap ([tasks/todo.md](../tasks/todo.md); spec in repo / `platform/k3s` as referenced in todo)
+TASK-0003 — k3s cluster bootstrap — **canonical spec:** [tasks/TASK_0003.md](../tasks/TASK_0003.md); queue index: [tasks/todo.md](../tasks/todo.md); optional runbook target: `platform/k3s/cluster-setup.md`
 
 **Later**
 
