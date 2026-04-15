@@ -404,7 +404,7 @@ Ubuntu Server (headless), UEFI, mdadm RAID1 boot tier, dual ESP, SSH. TASK-0001 
 `/platform`, `/data`, `/backups`, UUID `fstab`, bind mounts for platform runtime paths. TASK-0002 closed.
 
 **Phase 0C — Kubernetes platform bootstrap:** **active.**  
-Install and stabilize k3s; ensure container runtime and kubelet data use platform-tier bind mounts (TASK-0003).
+Install and stabilize k3s; ensure container runtime and kubelet data use platform-tier bind mounts (TASK-0003). Baseline Kubernetes namespaces for this task are locked to: **`aluna-access`**, **`aluna-context`**, **`aluna-mira`**, **`aluna-terra`**, **`observability`** — do not introduce new **`opencontext-*`** namespaces during bootstrap.
 
 No application workloads should be implemented yet.
 
