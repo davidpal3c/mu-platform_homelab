@@ -1,6 +1,6 @@
-# Aluna platform — operations repository
+# Aluna platform 
 
-Stateful **platform and infrastructure** repository for the **Aluna** ecosystem (control, context, awareness, and surface layers — see [docs/aluna-platform/platform-ontology.md](docs/aluna-platform/platform-ontology.md)).
+This is the stateful **platform and infrastructure** repository for the **Aluna** ecosystem (control, context, awareness, and surface layers, see [docs/aluna-platform/platform-ontology.md](docs/aluna-platform/platform-ontology.md)).
 
 This repository is the operational source of truth for the homelab platform: storage, Kubernetes, networking, observability, deployment patterns, and deployed workload state.
 
