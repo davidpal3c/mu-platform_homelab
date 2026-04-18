@@ -10,7 +10,7 @@
 
 ## 1. Platform identity
 
-- **Product platform:** **Aluna** (ontology: Access, Context, Mira, Terra — see [docs/aluna-platform/platform-ontology.md](aluna-platform/platform-ontology.md)). **Aluna Context** runtime architecture: [docs/aluna-context/architecture-diagrams/](aluna-context/architecture-diagrams/architecture%20diagrams.md).
+- **Product platform:** **Aluna** (ontology: **Ceiba**, Aluna Context, Aluna Mira, Aluna Terra — see [docs/aluna-platform/platform-ontology.md](aluna-platform/platform-ontology.md)). **Aluna Context** runtime architecture: [docs/aluna-context/architecture-diagrams/](aluna-context/architecture-diagrams/architecture%20diagrams.md).
 - **Machine:** Lenovo ThinkStation P510 (Xeon E5-2640 v4, 32GB RAM).
 - **Node:** aluna-node-01 (homelab; align `hostname` on the host when renaming).
 - **OS:** Ubuntu Server LTS (headless, SSH-accessible).

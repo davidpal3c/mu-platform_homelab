@@ -2,7 +2,7 @@
 
 
 flowchart TD
-    A[Aluna\nPre-Execution Decision Layer] --> B[Aluna Access\nControl Layer]
+    A[Aluna\nPre-Execution Decision Layer] --> B[Ceiba\nControl Layer]
     A --> C[Aluna Context\nMeaning Layer]
     A --> D[Aluna Mira\nAwareness Layer]
     A --> E[Aluna Terra\nSurface Layer]
@@ -34,7 +34,7 @@ flowchart TD
 flowchart TB
     U[Clients / Developers / Internal Services]
 
-    U --> G[Aluna Access]
+    U --> G[Ceiba]
     G --> X[Protected APIs / Services]
 
     X --> C[Aluna Context]
@@ -54,16 +54,16 @@ flowchart TB
 3. REQUEST LIFECYCLE DIAGRAM 
 sequenceDiagram
     participant Client
-    participant Access as Aluna Access
+    participant Ceiba as Ceiba
     participant API as Protected API
     participant Context as Aluna Context
     participant Mira as Aluna Mira
     participant Terra as Aluna Terra
 
-    Client->>Access: API request with key / credentials
-    Access->>Access: Validate identity, policy, limits, plan
-    Access-->>Client: Reject if unauthorized / over quota
-    Access->>API: Forward permitted request
+    Client->>Ceiba: API request with key / credentials
+    Ceiba->>Ceiba: Validate identity, policy, limits, plan
+    Ceiba-->>Client: Reject if unauthorized / over quota
+    Ceiba->>API: Forward permitted request
 
     API->>Context: Query contextual / geo-aware data
     Context-->>API: Return structured context
@@ -83,7 +83,7 @@ sequenceDiagram
 4. PRODUCT EVOLUTION DIAGRAM
 
 flowchart LR
-    A1[Phase 1\nAluna Access] --> A2[Phase 2\nAluna Context]
+    A1[Phase 1\nCeiba] --> A2[Phase 2\nAluna Context]
     A2 --> A3[Phase 3\nAluna Mira]
     A3 --> A4[Phase 4\nAluna Terra]
 
@@ -108,9 +108,9 @@ flowchart TB
         LB[Ingress / Edge Proxy]
     end
 
-    subgraph ControlPlane[Aluna Access]
-        ACC_API[Access API / Control API]
-        ACC_RT[Access Runtime Enforcement]
+    subgraph ControlPlane[Ceiba]
+        ACC_API[Ceiba / Control API]
+        ACC_RT[Ceiba runtime enforcement]
         ACC_REDIS[(Redis\nrate limits / cache)]
         ACC_DB[(Postgres\nprojects, keys, policies, plans, usage)]
     end
@@ -168,7 +168,7 @@ flowchart TB
 
 | Ontology Layer | Product       | Primary Technical Responsibility                     | Core Infra Components                                        |
 | -------------- | ------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
-| Control        | Aluna Access  | identity, policy, quota, monetization enforcement    | API runtime, Postgres, Redis, control API                    |
+| Control        | Ceiba  | identity, policy, quota, monetization enforcement    | API runtime, Postgres, Redis, control API                    |
 | Meaning        | Aluna Context | normalized contextual and geo-aware data APIs        | ingestion workers, external providers, context store         |
 | Awareness      | Aluna Mira    | telemetry interpretation and AI-assisted ops insight | logs/metrics/events pipeline, detection engine, AI reasoning |
 | Surface        | Aluna Terra   | visual exploration and geo analytics UI              | dashboard frontend, presentation API, map/data rendering     |
@@ -179,15 +179,15 @@ flowchart TB
 
 
 flowchart TB
-    Client[Developer / App Client] --> Access[Aluna Access]
+    Client[Developer / App Client] --> Ceiba[Ceiba]
 
-    Access --> AccessDB[(Postgres)]
-    Access --> Redis[(Redis)]
+    Ceiba --> AccessDB[(Postgres)]
+    Ceiba --> Redis[(Redis)]
 
-    Access --> ProtectedAPI[Protected API / Customer Service]
+    Ceiba --> ProtectedAPI[Protected API / Customer Service]
 
     ProtectedAPI -.future dogfooding.-> Context[Aluna Context]
-    Access -.future telemetry.-> Mira[Aluna Mira]
+    Ceiba -.future telemetry.-> Mira[Aluna Mira]
     Context -.future presentation.-> Terra[Aluna Terra]
 
 
@@ -200,7 +200,7 @@ ARCHITECTURAL READING
 
 These diagrams establish a consistent model:
 
-Aluna Access is the first enforceable runtime boundary.
+Ceiba is the first enforceable runtime boundary.
 Aluna Context becomes the structured reality layer that applications and analytics depend on.
 Aluna Mira turns operational exhaust into understanding and guidance.
 Aluna Terra becomes the human-facing exploration surface for context and insight.

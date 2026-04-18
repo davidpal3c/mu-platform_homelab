@@ -17,7 +17,7 @@ The platform exists to provide a production-like environment for:
 
 Ontology mapping (high level):
 
-- **Aluna Access** — first enforceable control-plane boundary (keys, policies, quotas).  
+- **Ceiba** — first enforceable control-plane boundary under Aluna (keys, policies, quotas).  
 - **Aluna Context** — meaning / geo-aware data plane (APIs, Postgres, ingestion).  
 - **Aluna Mira** — awareness (observability, interpretation, AI-assisted ops).  
 - **Aluna Terra** — surface (dashboards, maps, analytics UI).  
@@ -65,7 +65,7 @@ This repo follows the workflow in [context/AGENTS.md](context/AGENTS.md):
 
 ## Near-term focus
 
-Support **Aluna Access** and the **Aluna Context** data plane with:
+Support **Ceiba** and the **Aluna Context** data plane with:
 
 - stable app hosting  
 - PostgreSQL  

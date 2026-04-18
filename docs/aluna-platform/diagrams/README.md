@@ -4,9 +4,9 @@ Mermaid sources for ontology, layering, request lifecycle, evolution, and runtim
 
 | File | Description |
 |------|-------------|
-| [01-ontology-product-infrastructure.md](01-ontology-product-infrastructure.md) | Ontology → products → capability branches |
-| [02-platform-layering.md](02-platform-layering.md) | Clients through Access to Context, Mira, Terra |
-| [03-request-lifecycle.md](03-request-lifecycle.md) | Sequence: Access → API → Context → Mira → Terra |
+| [01-ontology-product-infrastructure-mapping.md](01-ontology-product-infrastructure-mapping.md) | Ontology → products → capability branches |
+| [02-platform-layering.md](02-platform-layering.md) | Clients through Ceiba to Context, Mira, Terra |
+| [03-request-lifecycle.md](03-request-lifecycle.md) | Sequence: Ceiba → API → Context → Mira → Terra |
 | [04-product-evolution.md](04-product-evolution.md) | Phase 1–4 product rollout |
 | [05-runtime-infrastructure-architecture.md](05-runtime-infrastructure-architecture.md) | Control / Context / Awareness / Surface planes + components |
 | [06-ontology-infrastructure-matrix.md](06-ontology-infrastructure-matrix.md) | Ontology ↔ infra responsibility table + reading |

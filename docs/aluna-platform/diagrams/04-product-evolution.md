@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart LR
-    A1["Phase 1<br/>Aluna Access"] --> A2["Phase 2<br/>Aluna Context"]
+    A1["Phase 1<br/>Ceiba"] --> A2["Phase 2<br/>Aluna Context"]
     A2 --> A3["Phase 3<br/>Aluna Mira"]
     A3 --> A4["Phase 4<br/>Aluna Terra"]
 

@@ -2,15 +2,15 @@
 
 ```mermaid
 flowchart TB
-    Client["Developer / App Client"] --> Access["Aluna Access"]
+    Client["Developer / App Client"] --> Ceiba["Ceiba"]
 
-    Access --> AccessDB[("Postgres")]
-    Access --> Redis[("Redis")]
+    Ceiba --> AccessDB[("Postgres")]
+    Ceiba --> Redis[("Redis")]
 
-    Access --> ProtectedAPI["Protected API / Customer Service"]
+    Ceiba --> ProtectedAPI["Protected API / Customer Service"]
 
     ProtectedAPI -.->|"future dogfooding"| Context["Aluna Context"]
-    Access -.->|"future telemetry"| Mira["Aluna Mira"]
+    Ceiba -.->|"future telemetry"| Mira["Aluna Mira"]
     Context -.->|"future presentation"| Terra["Aluna Terra"]
 ```
 

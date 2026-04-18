@@ -3,7 +3,7 @@
 | Document | Description |
 |----------|-------------|
 | [aluna-platform/README.md](aluna-platform/README.md) | **Aluna** umbrella — ontology, platform-wide diagrams, sources |
-| [aluna-platform/platform-ontology.md](aluna-platform/platform-ontology.md) | Access, Context, Mira, Terra definitions and evolution model |
+| [aluna-platform/platform-ontology.md](aluna-platform/platform-ontology.md) | Ceiba, Aluna Context, Mira, Terra definitions and evolution model |
 | [aluna-platform/diagrams/](aluna-platform/diagrams/README.md) | Platform-level Mermaid diagrams (layering, lifecycle, infra) |
 | [aluna-context/README.md](aluna-context/README.md) | **Aluna Context** workload — runtime / ingestion / k3s architecture |
 | [aluna-context/architecture-diagrams/](aluna-context/architecture-diagrams/architecture%20diagrams.md) | Context Mermaid + PNG exports |

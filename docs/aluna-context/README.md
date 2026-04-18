@@ -16,7 +16,7 @@ It is **not** the home of platform-wide ontology or cross-product diagrams — t
 |---------|----------------------------|
 | **Aluna** (umbrella ontology + platform diagrams) | [`docs/aluna-platform/`](../aluna-platform/README.md) |
 | **Aluna Context** (this workload) | `docs/aluna-context/` ← you are here |
-| Aluna Access / Mira / Terra | Future: add `docs/aluna-access/`, `docs/aluna-mira/`, `docs/aluna-terra/` or equivalent as workloads mature |
+| Ceiba / Aluna Mira / Aluna Terra | Future: add `docs/ceiba/`, `docs/aluna-mira/`, `docs/aluna-terra/` or equivalent as workloads mature |
 
 ## Infra note
 
