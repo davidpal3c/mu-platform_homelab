@@ -21,19 +21,19 @@ Acts as a control plane for API-driven systems
 The Aluna platform is composed of four primary domains, each representing a distinct layer of system reality:
 
 Layer	Domain	Product	Ontological Function
-1	Control	Aluna Access	Determines permission and constraints
+1	Control	Ceiba	Determines permission and constraints
 2	Meaning	Aluna Context	Defines structured, contextual data
 3	Awareness	Aluna Mira	Interprets and evaluates system behavior
 4	Surface	Aluna Terra	Presents and visualizes system state
 🧱 3. Domain Definitions
-3.1 Aluna Access
+3.1 Ceiba
 
 Ontology Role:
 
 Constraint & Authorization Layer
 
 Definition:
-Aluna Access governs who may act, under what conditions, and to what extent within a system.
+Ceiba governs who may act, under what conditions, and to what extent within a system.
 
 Responsibilities:
 
@@ -116,7 +116,7 @@ The Aluna platform follows a deterministic progression of system reality:
 
 Potential Action
     ↓
-[Aluna Access]
+[Ceiba]
     ↓
 Permitted Action
     ↓
@@ -137,7 +137,7 @@ Visualized Reality
 Aluna defines what is allowed, what it means, how it is understood, and how it is seen.
 
 5.2 Layer Relationships
-Access depends on policies and identity
+Ceiba depends on policies and identity
 Context enriches permitted actions
 Mira evaluates outcomes and patterns
 Terra exposes insights to users
@@ -150,11 +150,11 @@ can evolve without breaking the ontology
 🧩 6. Naming System
 Pattern
 
-Aluna + [Domain of Reality]
+Aluna is the umbrella platform. Products include Ceiba (control), Aluna Context, Aluna Mira, and Aluna Terra — not every product name uses the Aluna + [domain] prefix.
 
 Examples:
 
-Access → control
+Ceiba → control
 Context → meaning
 Mira → awareness
 Terra → surface
@@ -169,7 +169,7 @@ Avoid overloaded technical terms (“Ops”, “Data”, “Cloud”)
 Avoid feature-level naming at product level
 🚀 7. Product Evolution Model
 Phase 1 — Control Layer
-Aluna Access
+Ceiba
 Establishes entry point and monetization
 Phase 2 — Meaning Layer
 Aluna Context

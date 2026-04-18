@@ -4,7 +4,7 @@
 flowchart TB
     U["Clients / Developers / Internal Services"]
 
-    U --> G["Aluna Access"]
+    U --> G["Ceiba"]
     G --> X["Protected APIs / Services"]
 
     X --> C["Aluna Context"]

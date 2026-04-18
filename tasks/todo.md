@@ -148,7 +148,7 @@ Phase 0B storage is complete and verified. k3s can install with runtime paths on
 
 Goal:
 
-Single-node k3s on **aluna-node-01**; baseline namespaces **`aluna-access`**, **`aluna-context`**, **`aluna-mira`**, **`aluna-terra`**, **`observability`** only (no new `opencontext-*`). Full scope, lessons preamble, acceptance criteria, and Builder mode: **`TASK_0003.md`**.
+Single-node k3s on **aluna-node-01**; baseline namespaces **`ceiba`**, **`aluna-context`**, **`aluna-mira`**, **`aluna-terra`**, **`observability`** only (no new `opencontext-*`). Full scope, lessons preamble, acceptance criteria, and Builder mode: **`TASK_0003.md`**.
 
 Non-scope (summary):
 
@@ -313,7 +313,7 @@ Align **documentation and operational references** with Aluna naming; track sens
 Scope:
 
 • Hostname `aluna-node-01` consistent in runbooks and context  
-• Namespace policy: **`aluna-*` + `observability`** as baseline; no new `opencontext-*` without ADR  
+• Namespace policy: **`ceiba`** + **`aluna-context`**, **`aluna-mira`**, **`aluna-terra`** + **`observability`** as baseline (per TASK-0003); no new `opencontext-*` without ADR  
 • Audit `docs/`, `tasks/`, `context/` for legacy strings; output a **migration matrix** (what / risk / rollback)  
 • **As-built:** ext4 label **`alethos-data`** on `/data` remains valid until a **separate** migration task — do not “fix” completed BR/review PDFs for branding alone
 

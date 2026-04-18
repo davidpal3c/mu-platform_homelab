@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart TD
-    A["Aluna<br/>Pre-Execution Decision Layer"] --> B["Aluna Access<br/>Control Layer"]
+    A["Aluna<br/>Pre-Execution Decision Layer"] --> B["Ceiba<br/>Control Layer"]
     A --> C["Aluna Context<br/>Meaning Layer"]
     A --> D["Aluna Mira<br/>Awareness Layer"]
     A --> E["Aluna Terra<br/>Surface Layer"]

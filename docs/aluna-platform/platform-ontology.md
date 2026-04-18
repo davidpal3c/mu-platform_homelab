@@ -24,7 +24,7 @@ The Aluna platform is composed of **four primary domains**, each a distinct laye
 
 | Layer | Domain | Product | Ontological function |
 |-------|--------|---------|------------------------|
-| 1 | Control | **Aluna Access** | Permission and constraints |
+| 1 | Control | **Ceiba** | Permission and constraints |
 | 2 | Meaning | **Aluna Context** | Structured, contextual data |
 | 3 | Awareness | **Aluna Mira** | Interprets and evaluates system behavior |
 | 4 | Surface | **Aluna Terra** | Presents and visualizes system state |
@@ -33,9 +33,9 @@ The Aluna platform is composed of **four primary domains**, each a distinct laye
 
 ## 3. Domain definitions
 
-### 3.1 Aluna Access
+### 3.1 Ceiba
 
-**Role:** Constraint and authorization layer.
+**Role:** Constraint and authorization layer (Control domain product under **Aluna**).
 
 **Definition:** Governs who may act, under what conditions, and to what extent.
 
@@ -79,7 +79,7 @@ The Aluna platform is composed of **four primary domains**, each a distinct laye
 
 ```text
 Potential Action
-    → [Aluna Access] → Permitted Action
+    → [Ceiba] → Permitted Action
     → [Aluna Context] → Contextualized Action
     → [Aluna Mira] → Interpreted behavior
     → [Aluna Terra] → Visualized reality
@@ -93,7 +93,7 @@ Potential Action
 
 **Layer relationships**
 
-- Access depends on policies and identity.  
+- Ceiba depends on policies and identity.  
 - Context enriches permitted actions.  
 - Mira evaluates outcomes and patterns.  
 - Terra exposes insights to users.  
@@ -104,11 +104,11 @@ Each layer operates independently, composes into a unified system, and can evolv
 
 ## 6. Naming system
 
-**Pattern:** `Aluna` + [domain of reality]
+**Aluna** is the umbrella platform. Product names include **Ceiba** (control), **Aluna Context**, **Aluna Mira**, and **Aluna Terra** — not all products use the `Aluna` + [domain] prefix; **Ceiba** names the Control layer.
 
 | Product | Domain |
 |---------|--------|
-| Aluna Access | Control |
+| Ceiba | Control |
 | Aluna Context | Meaning |
 | Aluna Mira | Awareness |
 | Aluna Terra | Surface |
@@ -123,7 +123,7 @@ Each layer operates independently, composes into a unified system, and can evolv
 
 | Phase | Product | Focus |
 |-------|---------|--------|
-| 1 | Aluna Access | Entry point and monetization |
+| 1 | Ceiba | Entry point and monetization |
 | 2 | Aluna Context | Differentiated data capabilities |
 | 3 | Aluna Mira | Intelligence and observability |
 | 4 | Aluna Terra | Exploration and productization |
@@ -142,7 +142,7 @@ Each layer operates independently, composes into a unified system, and can evolv
 
 ## 9. Final statement
 
-**Aluna** is the system layer where decisions are made before actions become reality. It governs access, defines context, interprets behavior, and reveals outcomes.
+**Aluna** is the system layer where decisions are made before actions become reality. **Ceiba** governs permission, **Aluna Context** defines meaning, **Aluna Mira** interprets behavior, and **Aluna Terra** reveals outcomes.
 
 ---
 
@@ -150,7 +150,7 @@ Each layer operates independently, composes into a unified system, and can evolv
 
 | Ontology product | Homelab / infra repo role |
 |------------------|---------------------------|
-| Aluna Access | Auth, keys, policies, quotas (workloads + edge) |
+| Ceiba | Auth, keys, policies, quotas (workloads + edge) |
 | Aluna Context | Primary API / data plane workloads (Postgres, Redis, ingestion) |
 | Aluna Mira | Observability stack (Prometheus, Loki, Grafana, alerts) |
 | Aluna Terra | Dashboards / geo UI (future deployment) |

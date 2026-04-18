@@ -29,7 +29,7 @@ Ideas and follow-ups **not** yet promoted to `tasks/todo.md`. Phase-appropriate 
 ## Naming / docs hygiene
 
 - **Git remote** name vs `alethos_platform` — document-only unless operator renames remote
-- **Diagram PNG regeneration** when namespace names in Mermaid sources fully align with `aluna-*` (coordinate with TASK-0006)
+- **Diagram PNG regeneration** when namespace names in Mermaid sources fully align with TASK-0003 baseline (`ceiba`, `aluna-context`, …) (coordinate with TASK-0006)
 
 ---
 
@@ -42,5 +42,5 @@ Ideas and follow-ups **not** yet promoted to `tasks/todo.md`. Phase-appropriate 
 
 ## Aluna products (deferred by roadmap)
 
-- Aluna Access / Mira / Terra doc trees under `docs/` when workloads exist
+- Ceiba / Aluna Mira / Aluna Terra doc trees under `docs/` when workloads exist
 - Aluna Context API deploy, Celery, AI enrichment — **explicitly later phases**

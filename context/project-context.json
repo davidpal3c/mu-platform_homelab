@@ -19,13 +19,14 @@
       "2026-03-15 TASK-0001: Boot tier implemented on aluna-node-01. RAID1 over sda+sdc (md0\u2192/boot, md1\u2192/, md2\u2192/var), dual ESP (sda1, sdc1). NVMe and sdb (HDD) reserved for TASK-0002.",
       "2026-03-15 TASK-0002: Platform/database/backup tiers mounted on aluna-node-01. /platform on nvme1n1 (~238G), /data on nvme0n1 (~477G 512G-class), /backups on sdb; UUID fstab + five bind mounts to /var/lib/*; ext4 all tiers.",
       "2026-03-28 Documentation sync: Homelab_Hardware_setup.json + task specs aligned to REVIEW-TASK-0002 / BR-TASK-0002; system-blueprint and platform-overview headers cite review PASS and storage-reality delta.",
-      "2026-03-29 Branding: Aluna platform ontology docs; hostname aluna-node-01 in repo; JSON keys device_mapping_aluna_node_01 / block_device_aluna_node_01."
+      "2026-03-29 Branding: Aluna platform ontology docs; hostname aluna-node-01 in repo; JSON keys device_mapping_aluna_node_01 / block_device_aluna_node_01.",
+      "2026-04-14 Product naming: Control-domain product is Ceiba (Aluna umbrella). k3s baseline namespace for control plane: ceiba (replaces aluna-access in TASK-0003 specs)."
     ]
   },
   "homelab_identity": {
     "primary_use": [
       "DevOps / Platform engineering flagship environment",
-      "Run Aluna Context + workers + data services",
+      "Run Ceiba + Aluna Context + workers + data services",
       "Operate observability stack with SLO mindset",
       "Practice production-like reliability patterns on single-node k3s"
     ],
@@ -36,6 +37,17 @@
       "os_target": "Ubuntu Server",
       "kubernetes": "k3s"
     }
+  },
+  "platform_naming": {
+    "umbrella_platform": "Aluna",
+    "control_product": "Ceiba",
+    "k3s_baseline_namespaces": [
+      "ceiba",
+      "aluna-context",
+      "aluna-mira",
+      "aluna-terra",
+      "observability"
+    ]
   },
   "design_principles": {
     "mini_production_cluster_definition": "Single host designed like a production cluster via storage/IO/failure-domain separation: OS/control-plane isolation, workload IO isolation, stateful DB isolation, and offline backup/archives isolation.",

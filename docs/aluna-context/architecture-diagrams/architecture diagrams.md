@@ -1,6 +1,6 @@
 1)	High-level system diagram (runtime + data plane)
 
-**Aluna mapping:** This file is **Aluna Context** workload documentation (data plane / Aluna Context API). Edge auth maps to **Aluna Access**; observability subgraph aligns with **Aluna Mira**; dashboards with **Aluna Terra**. Platform-wide ontology and cross-product diagrams: [platform-ontology.md](../../aluna-platform/platform-ontology.md) and [platform diagrams](../../aluna-platform/diagrams/README.md).
+**Aluna mapping:** This file is **Aluna Context** workload documentation (data plane / Aluna Context API). Edge auth maps to **Ceiba**; observability subgraph aligns with **Aluna Mira**; dashboards with **Aluna Terra**. Platform-wide ontology and cross-product diagrams: [platform-ontology.md](../../aluna-platform/platform-ontology.md) and [platform diagrams](../../aluna-platform/diagrams/README.md).
 
 Key intent (Operator-friendly):
 •	The API stays deterministic and cacheable.

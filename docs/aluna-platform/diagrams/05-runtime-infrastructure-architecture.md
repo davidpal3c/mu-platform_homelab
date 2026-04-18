@@ -12,9 +12,9 @@ flowchart TB
         LB["Ingress / Edge Proxy"]
     end
 
-    subgraph ControlPlane["Aluna Access"]
-        ACC_API["Access API / Control API"]
-        ACC_RT["Access Runtime Enforcement"]
+    subgraph ControlPlane["Ceiba"]
+        ACC_API["Ceiba / Control API"]
+        ACC_RT["Ceiba runtime enforcement"]
         ACC_REDIS[("Redis<br/>rate limits / cache")]
         ACC_DB[("Postgres<br/>projects, keys, policies, plans, usage")]
     end
