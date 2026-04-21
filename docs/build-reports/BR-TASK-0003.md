@@ -1,9 +1,9 @@
 BR-TASK-0003 — k3s cluster bootstrap (Phase 0C)
 ===============================================
 
-**Single source of truth:** This file is the canonical **operator runbook + build report** for TASK-0003 in `docs/build-reports/`.
+**Canonical task spec (scope, acceptance, namespace lock):** `tasks/TASK_0003.md` — always prefer that file if this runbook drifts.
 
-**Canonical task spec (scope, acceptance):** `tasks/TASK_0003.md`  
+**This file:** operator runbook + build-report scaffold for TASK-0003 under `docs/build-reports/`. Namespace names below match the **Ceiba** ontology lock (`ceiba`, `aluna-context`, `aluna-mira`, `aluna-terra`, `observability`). Do **not** use legacy `opencontext-*` names for new bootstrap work.  
 **Node:** `aluna-node-01`  
 **Dependency:** TASK-0002 complete and verified  
 **Builder role boundary:** infrastructure bootstrap only; no workload deployment, no observability stack rollout, no ingress hardening.
@@ -20,10 +20,10 @@ Part A — Task reference (from Planner)
 - k3s control-plane install.
 - kubeconfig access.
 - Namespace bootstrap:
-  - `opencontext-api`
-  - `opencontext-data`
-  - `opencontext-workers`
-  - `opencontext-ai`
+  - `ceiba` (Ceiba / control-plane product namespace)
+  - `aluna-context`
+  - `aluna-mira`
+  - `aluna-terra`
   - `observability`
 - DNS/networking baseline checks.
 - StorageClass + PVC smoke test (local-path).
@@ -166,10 +166,10 @@ Expected:
 ### B.4 Namespace bootstrap
 
 ```bash
-kubectl create namespace opencontext-api --dry-run=client -o yaml | kubectl apply -f -
-kubectl create namespace opencontext-data --dry-run=client -o yaml | kubectl apply -f -
-kubectl create namespace opencontext-workers --dry-run=client -o yaml | kubectl apply -f -
-kubectl create namespace opencontext-ai --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace ceiba --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace aluna-context --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace aluna-mira --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace aluna-terra --dry-run=client -o yaml | kubectl apply -f -
 kubectl create namespace observability --dry-run=client -o yaml | kubectl apply -f -
 kubectl get ns
 ```
@@ -191,15 +191,10 @@ Expected: `local-path` present (usually default in k3s).
 ```bash
 cat <<'EOF' | kubectl apply -f -
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: opencontext-data
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: smoke-pvc
-  namespace: opencontext-data
+  namespace: aluna-context
 spec:
   accessModes:
     - ReadWriteOnce
@@ -212,7 +207,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: smoke-writer
-  namespace: opencontext-data
+  namespace: aluna-context
 spec:
   restartPolicy: Never
   containers:
@@ -232,9 +227,9 @@ EOF
 3) Verify PVC and pod lifecycle:
 
 ```bash
-kubectl get pvc,pv -n opencontext-data
-kubectl get pod smoke-writer -n opencontext-data -w
-kubectl logs smoke-writer -n opencontext-data
+kubectl get pvc,pv -n aluna-context
+kubectl get pod smoke-writer -n aluna-context -w
+kubectl logs smoke-writer -n aluna-context
 ```
 
 Expected:
@@ -245,8 +240,8 @@ Expected:
 4) Cleanup smoke resources:
 
 ```bash
-kubectl delete pod smoke-writer -n opencontext-data --ignore-not-found
-kubectl delete pvc smoke-pvc -n opencontext-data --ignore-not-found
+kubectl delete pod smoke-writer -n aluna-context --ignore-not-found
+kubectl delete pvc smoke-pvc -n aluna-context --ignore-not-found
 ```
 
 ---

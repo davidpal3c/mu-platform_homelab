@@ -54,7 +54,7 @@ TASK-0002 — Storage tier mount configuration ([tasks/TASK_0002.md](../tasks/TA
 
 **Immediate focus**
 
-TASK-0003 — k3s cluster bootstrap — **canonical spec:** [tasks/TASK_0003.md](../tasks/TASK_0003.md); queue index: [tasks/todo.md](../tasks/todo.md); optional runbook target: `platform/k3s/cluster-setup.md`
+TASK-0003 — k3s cluster bootstrap — **canonical spec:** [tasks/TASK_0003.md](../tasks/TASK_0003.md); queue index: [tasks/todo.md](../tasks/todo.md); optional runbook target: `platform/k3s/cluster-setup.md`. **Namespace lock (0C):** `ceiba`, `aluna-context`, `aluna-mira`, `aluna-terra`, `observability` (no `opencontext-*`).
 
 **Later**
 
