@@ -1,4 +1,4 @@
-# Aluna platform 
+# Homelab platform (Aluna)
 
 This is the stateful **platform and infrastructure** repository for the **Aluna** ecosystem (control, context, awareness, and surface layers, see [docs/aluna-platform/platform-ontology.md](docs/aluna-platform/platform-ontology.md)).
 
