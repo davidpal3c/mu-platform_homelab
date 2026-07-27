@@ -1,24 +1,28 @@
+# Private workspace — planning docs, task specs, build reports, engineering log.
+# Tracked in its own repository (homelab_lemurjob_workspace01), never in this one.
+_workspace/
 
-
-.DS_Store
-**/.DS_Store
-
-
-workload-specific docs/
-
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-
-.DS_Store
-.idea
-.vscode
-
-
+# Secrets — never commit credentials, keys, or certificates
 secrets/
-.env
 *.key
 *.pem
+*.p12
+*.pfx
+kubeconfig
+*.kubeconfig
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*~
