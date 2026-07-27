@@ -76,7 +76,9 @@ Latency-sensitive, steady-write IO, deliberately kept away from Prometheus and L
 
 **Capacity planning uses the measured ~477 GB.** This device is 512 GB-class hardware; earlier drafts of this project called it "1 TB" and that number was wrong. Plan against what `lsblk` reports, not against the label on the box.
 
-**As-built note:** the ext4 volume label on this device is `alethos-data`, set when the filesystem was created under the project's former name. It is recorded here because it is what `blkid` reports on the live node. Relabelling to `mu-data` is a tracked, non-urgent follow-up requiring an approved change with a rollback path — a cosmetic rename is not worth risking a validated mount.
+**As-built note:** the ext4 volume label on this device is `alethos-data`, set when the filesystem was created under the project's former name. It is recorded here because it is what `blkid` reports on the live node, and it stays recorded that way until the disk itself changes — documentation that runs ahead of the hardware is worse than documentation that admits an inconsistency.
+
+Relabelling to `mu-data` is **scheduled**, not deferred. `tune2fs -L` rewrites one field in the ext4 superblock: the UUID is untouched, every `fstab` line keys on `UUID=`, and nothing on this node resolves the device through `/dev/disk/by-label/`. The tier currently holds no database, so the change is being made while the blast radius is an empty filesystem rather than after Postgres owns it.
 
 ---
 
@@ -131,5 +133,6 @@ A reboot test is part of acceptance, not an optional extra. Mounts that work unt
 | Per-mount usage alerting (80 / 90 / 95 %) | Blocked on observability phase |
 | SMART health and temperature monitoring | Blocked on observability phase |
 | Prometheus / Loki retention limits on `/platform` | To be set when observability is deployed |
-| ext4 relabel `alethos-data` → `mu-data` on `/data` | Deferred; needs approved change + rollback |
+| ext4 relabel `alethos-data` → `mu-data` on `/data` | Scheduled — bundled with the host rename into one change window |
+| Host rename to `mu-node-01`, incl. mdadm homehost re-stamp | Scheduled — must land before k3s bootstrap |
 | Off-host backup replication | Design pending — see [backups.md](backups.md) |
