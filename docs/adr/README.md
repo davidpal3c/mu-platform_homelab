@@ -1,6 +1,6 @@
 # Architecture decision records
 
-Records of decisions that were **contested, expensive to reverse, or likely to be questioned later**. Not a log of every choice — an ADR that records the obvious is noise.
+Records of decisions that were **contested, expensive to reverse, or likely to be questioned later**. Not a log of every choice, since an ADR that records the obvious just adds noise.
 
 ## Format
 
@@ -27,10 +27,10 @@ What else was on the table and why it lost.
 
 ## Rules
 
-- ADRs are **immutable once accepted**. A changed decision gets a new ADR that supersedes the old one; the original stays as the record of what was believed at the time.
-- Consequences include the **bad** ones. An ADR that only lists benefits is marketing.
+- ADRs are **immutable once accepted**. A changed decision gets a new ADR that supersedes the old one, and the original stays as the record of what was believed at the time.
+- Consequences include the **bad** ones. An ADR that only lists benefits isn't much use to anyone.
 - Link the ADR from the doc it affects.
 
 ## Decisions recorded so far
 
-None yet. Decisions made during the platform foundation phases — storage tiering, ext4 over ZFS, k3s over kubeadm, `nofail` on tier mounts — are documented inline in the phase documents and are candidates for retroactive ADRs.
+None yet. The decisions made during the platform foundation phases (storage tiering, ext4 over ZFS, k3s over kubeadm, `nofail` on tier mounts) are documented inline in the phase documents and are candidates for retroactive ADRs.

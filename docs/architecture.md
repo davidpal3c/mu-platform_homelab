@@ -2,13 +2,13 @@
 
 **Status:** storage and OS layers **built**; Kubernetes **in flight**; everything above it **planned**.
 
-This is the architectural record for **mu-platform**, a single-node homelab platform designed to run one real workload ([Lemurjob](workload-lemurjob.md)) under production-shaped operational discipline.
+This is the architectural record for **mu-platform**, a single-node homelab platform built to run one real workload ([Lemurjob](workload-lemurjob.md)) with production-shaped operational discipline.
 
 ---
 
 ## 1. Design intent
 
-A single host is not a production cluster. It can, however, be *built like one* — and the useful part of the exercise is doing the separation work that a real cluster forces on you:
+A single host isn't a production cluster, but it can be built like one. The useful part is doing the separation work a real cluster would force on you anyway:
 
 | Production concern | How it is expressed on one node |
 |--------------------|----------------------------------|
@@ -19,7 +19,7 @@ A single host is not a production cluster. It can, however, be *built like one* 
 | Observability-first | Metrics, logs, and alerts land before workloads, not after an incident |
 | Config as truth | Layout, decisions, and runbooks live in Git, not in shell history |
 
-The build order is deliberate and gated: **infrastructure → observability → deployment discipline → workload**. No application work begins before the platform capability it depends on is accepted.
+The build order is gated: **infrastructure → observability → deployment discipline → workload**. No application work starts before the platform capability it depends on is accepted.
 
 ---
 
@@ -61,7 +61,7 @@ flowchart TB
 
 **Built and verified:** Ubuntu Server on an mdadm RAID1 boot mirror with a duplicated ESP, and all four storage tiers mounted at boot by UUID with `nofail`, including five bind mounts that keep container-runtime and observability churn off the boot RAID. See [storage.md](storage.md).
 
-**In flight:** single-node k3s bootstrap — runtime paths validated against the existing bind mounts, baseline namespaces, and a PVC smoke test. See [kubernetes.md](kubernetes.md).
+**In flight:** single-node k3s bootstrap, with runtime paths validated against the existing bind mounts, baseline namespaces, and a PVC smoke test. See [kubernetes.md](kubernetes.md).
 
 **Not yet deployed:** observability stack, ingress controller and TLS, CI/CD pipeline, backup automation, and the Lemurjob workload itself.
 
@@ -79,13 +79,13 @@ flowchart TB
 | Delivery | Build, publish, deploy | Git-driven pipeline → registry → cluster | Planned |
 | Workload | The service being operated | Lemurjob — API, control plane, workers, bot | Planned |
 
-Each layer is only allowed to exist once the one below it is verified. That constraint is the project.
+Each layer only gets to exist once the one below it is verified.
 
 ---
 
 ## 4. Target runtime topology
 
-Where the platform is going once k3s, ingress, and observability land:
+Where the platform is heading once k3s, ingress, and observability land:
 
 ```mermaid
 flowchart TB
@@ -163,15 +163,15 @@ flowchart TB
 
 ---
 
-## 6. Deliberate trade-offs
+## 6. Trade-offs
 
-Single-node homelab, honestly stated:
+What running one node costs, said plainly:
 
-- **No HA.** One control plane, one node. Node loss is downtime; recovery is restore-from-backup, and the restore path is what gets rehearsed instead.
-- **`nofail` on tier mounts.** Prevents a missing disk from wedging boot, at the cost of services potentially starting without their data. Mitigated by mount alerting, not by removing the flag.
-- **RAID1 on the boot tier only.** Data and platform tiers are single devices; their resilience story is backups plus restore drills, not mirroring.
-- **WAL isolated logically, not physically.** `/data/postgres_wal` is a separate mountpoint on the same NVMe. It enforces the discipline now and makes a future physical split a config change instead of a migration.
-- **ext4 everywhere.** Chosen over ZFS for operational simplicity. Snapshot and rollback ergonomics are traded away deliberately; revisit if snapshot discipline becomes the priority.
+- **No HA.** One control plane, one node. Losing the node means downtime, and recovery means restoring from backup. So the restore path is what gets rehearsed.
+- **`nofail` on tier mounts.** Keeps a missing disk from wedging boot, at the cost of services possibly starting without their data. The fix is mount alerting, not removing the flag.
+- **RAID1 on the boot tier only.** The data and platform tiers are single devices. Their resilience story is backups and restore drills, not mirroring.
+- **WAL isolated logically, not physically.** `/data/postgres_wal` is a separate mountpoint on the same NVMe. It builds the habit now and turns a future physical split into a config change rather than a migration.
+- **ext4 everywhere.** Chosen over ZFS for operational simplicity, which means giving up snapshot and rollback ergonomics. Worth revisiting if snapshots become the priority.
 
 ---
 

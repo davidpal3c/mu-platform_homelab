@@ -9,6 +9,6 @@ Mermaid sources for **mu-platform**. Rendered inline by GitHub, VS Code (Mermaid
 | [03-request-path.md](03-request-path.md) | A request from the internet to the data plane and back | Target state |
 | [04-delivery-pipeline.md](04-delivery-pipeline.md) | Commit → CI → registry → cluster, with the rollback path | Target state |
 
-Diagrams marked **Built** describe what exists on the node today. Target-state diagrams describe the designed end state and are kept in step with the phase documents in [../](../README.md) — they are not a claim that the infrastructure is running.
+Diagrams marked **Built** describe what exists on the node today. Target-state diagrams describe the designed end state and are kept in step with the phase documents in [../](../README.md). They aren't a claim that the infrastructure is running.
 
 Narrative context: [../architecture.md](../architecture.md).

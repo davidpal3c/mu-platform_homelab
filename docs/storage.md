@@ -2,7 +2,7 @@
 
 **Status: BUILT.** All four tiers are implemented on `mu-node-01`, mounted at boot by UUID, and verified after reboot.
 
-The storage layer is where the "single node, built like a cluster" idea actually shows up. One host, four physical devices, one job each — so that OS churn, container churn, database IO, and backups cannot damage one another.
+The storage layer is where the "single node, built like a cluster" idea actually shows up. One host, four physical devices, one job each, so that OS churn, container churn, database IO, and backups can't damage one another.
 
 ---
 
@@ -15,10 +15,10 @@ The storage layer is where the "single node, built like a cluster" idea actually
 | Database | `nvme0n1` (WD SN530) | ~477 GB | ext4 | `/data` | PostgreSQL, WAL, Redis |
 | Backup | `sdb` (SATA HDD) | ~931 GB | ext4 | `/backups` | Dumps, snapshots, archives |
 
-Two details worth stating plainly, because both have bitten this project before:
+Two details that have already tripped me up here:
 
 - **The larger NVMe is the database tier**, not the platform tier. Smaller NVMe (~238 GB) → `/platform`; larger (~477 GB) → `/data`.
-- **The backup device is `sdb`, not `sdc`.** `sdc` is the second RAID1 boot SSD. Confusing the two would destroy the OS mirror. Every destructive procedure in this repo re-verifies device identity with `lsblk -o NAME,SIZE,MODEL` before touching anything.
+- **The backup device is `sdb`, not `sdc`.** `sdc` is the second RAID1 boot SSD, and mixing the two up would destroy the OS mirror. Every destructive procedure in this repo re-checks device identity with `lsblk -o NAME,SIZE,MODEL` first.
 
 ---
 
@@ -34,17 +34,17 @@ sdc ─┘               ├─ md1 → /
 - **Boot mode:** UEFI.
 - **ESP:** `sda1` mounted at `/boot/efi`; `sdc1` is a synced secondary ESP.
 - **GRUB:** installed on both `/dev/sda` and `/dev/sdc`.
-- **`/var` is a separate array member** — the classic failure mode is logs or container data filling the root filesystem and bricking the OS. Isolating `/var` bounds that, and the bind mounts below move the worst offenders off this tier entirely.
+- **`/var` is a separate array member.** The classic failure mode is logs or container data filling the root filesystem and bricking the OS. Isolating `/var` bounds that, and the bind mounts below move the worst offenders off this tier entirely.
 
-**Failure behaviour:** one boot SSD can fail and the node stays up, bootable from the survivor. Note the honest caveat — a **manual failover boot test is still outstanding**. Until it is exercised, RAID1 here is a design property, not a proven one.
+**Failure behaviour:** one boot SSD can fail and the node stays up, bootable from the survivor. With one caveat worth being upfront about: the **manual failover boot test is still outstanding**. Until it's actually exercised, RAID1 here is a design property rather than a proven one.
 
-**Operational follow-up:** the secondary ESP must be re-synced after kernel or GRUB updates. It does not update itself.
+**Operational follow-up:** the secondary ESP has to be re-synced after kernel or GRUB updates. It doesn't update itself.
 
 ---
 
 ## 3. Platform tier — `/platform`
 
-The write-heavy tier. Container image layers, kubelet state, and observability retention all churn hard, and none of it belongs on the boot mirror.
+The write-heavy tier. Container image layers, kubelet state, and observability retention all churn hard, and none of that belongs on the boot mirror.
 
 Five bind mounts redirect the high-churn paths:
 
@@ -56,11 +56,11 @@ Five bind mounts redirect the high-churn paths:
 | `/platform/prometheus` | `/var/lib/prometheus` |
 | `/platform/loki` | `/var/lib/loki` |
 
-Bind mounts rather than symlinks, because k3s and containerd both behave better against real mountpoints, and because `findmnt` then gives an unambiguous answer to "is this actually landing on the platform disk?"
+Bind mounts rather than symlinks, because k3s and containerd both behave better against real mountpoints, and because `findmnt` then gives a straight answer to "is this actually landing on the platform disk?"
 
-**`fstab` ordering matters:** the `/platform` filesystem line must appear *before* its bind lines, or the binds mount onto an empty directory. Base mount before binds — every time.
+**`fstab` ordering matters:** the `/platform` filesystem line has to come *before* its bind lines, or the binds mount onto an empty directory. Base mount before binds, every time.
 
-**Failure behaviour:** if `/platform` fills or fails to mount, the OS and database tier are untouched. Workloads are affected; the node stays recoverable.
+**Failure behaviour:** if `/platform` fills or fails to mount, the OS and database tier are untouched. Workloads are affected, but the node stays recoverable.
 
 ---
 
@@ -72,13 +72,13 @@ Bind mounts rather than symlinks, because k3s and containerd both behave better 
 | `/data/postgres_wal` | Write-ahead log — logically isolated mountpoint |
 | `/data/redis` | Redis persistence |
 
-Latency-sensitive, steady-write IO, deliberately kept away from Prometheus and Loki retention growth. WAL gets its own mountpoint even though it currently shares the physical NVMe — it enforces the operational habit now, and turns a future physical split into a config change instead of a migration.
+Latency-sensitive, steady-write IO, kept away from Prometheus and Loki retention growth. WAL gets its own mountpoint even though it currently shares the physical NVMe. That builds the habit now and turns a future physical split into a config change rather than a migration.
 
-**Capacity planning uses the measured ~477 GB.** This device is 512 GB-class hardware; earlier drafts of this project called it "1 TB" and that number was wrong. Plan against what `lsblk` reports, not against the label on the box.
+**Capacity planning uses the measured ~477 GB.** This is 512 GB-class hardware. Earlier drafts of this project called it "1 TB" and that was simply wrong. Plan against what `lsblk` reports, not the label on the box.
 
-**As-built note:** the ext4 volume label on this device is `alethos-data`, set when the filesystem was created under the project's former name. It is recorded here because it is what `blkid` reports on the live node, and it stays recorded that way until the disk itself changes — documentation that runs ahead of the hardware is worse than documentation that admits an inconsistency.
+**As-built note:** the ext4 volume label on this device is `alethos-data`, set when the filesystem was created under the project's former name. It's recorded here because it's what `blkid` reports on the live node, and it stays that way until the disk itself changes. Docs that run ahead of the hardware are worse than docs that admit an inconsistency.
 
-Relabelling to `mu-data` is **scheduled**, not deferred. `tune2fs -L` rewrites one field in the ext4 superblock: the UUID is untouched, every `fstab` line keys on `UUID=`, and nothing on this node resolves the device through `/dev/disk/by-label/`. The tier currently holds no database, so the change is being made while the blast radius is an empty filesystem rather than after Postgres owns it.
+Relabelling to `mu-data` is **scheduled**, not deferred. `tune2fs -L` rewrites one field in the ext4 superblock: the UUID is untouched, every `fstab` line keys on `UUID=`, and nothing on this node resolves the device through `/dev/disk/by-label/`. The tier holds no database yet, so the change happens while the blast radius is an empty filesystem rather than after Postgres owns it.
 
 ---
 
@@ -86,22 +86,22 @@ Relabelling to `mu-data` is **scheduled**, not deferred. `tune2fs -L` rewrites o
 
 Cheap capacity on spinning disk, physically separate from the data it protects. Large sequential writes, low IOPS requirement, and no competition with hot-tier IO.
 
-Scope, retention, restore verification, and off-host replication are covered in [backups.md](backups.md) — currently **planned**, not built. A backup device with no verified restore is storage, not a backup.
+Scope, retention, restore verification, and off-host replication are covered in [backups.md](backups.md), currently **planned** rather than built. A backup disk nobody has restored from is just storage.
 
 ---
 
 ## 6. Persistence and mount options
 
-All tier filesystems are mounted from `/etc/fstab` by **`UUID=`** — never by `/dev/sdX`, which reorders across reboots and kernel upgrades.
+All tier filesystems are mounted from `/etc/fstab` by **`UUID=`**, never by `/dev/sdX`, which reorders across reboots and kernel upgrades.
 
 | Line type | Options |
 |-----------|---------|
 | Tier filesystems | `defaults,nofail` |
 | Bind mounts | `bind,nofail` |
 
-**Why `nofail`:** a missing or failed disk degrades the node instead of dropping boot into an emergency shell — the right trade-off for a headless machine reachable only over SSH.
+**Why `nofail`:** a missing or failed disk degrades the node instead of dropping boot into an emergency shell. That's the right trade-off for a headless machine I can only reach over SSH.
 
-**What `nofail` costs:** services can start against an empty directory when a tier silently fails to mount. That is a real risk and it is not solved by removing the flag; it is solved by alerting on expected mountpoints, which is a required deliverable of the observability phase.
+**What `nofail` costs:** services can start against an empty directory when a tier silently fails to mount. That's a real risk, and removing the flag doesn't solve it. Alerting on expected mountpoints does, which is why it's a required deliverable of the observability phase.
 
 ---
 
@@ -120,7 +120,7 @@ cat /proc/mdstat               # RAID1 state — expect [UU]
 grep -v '^#' /etc/fstab        # base-before-bind ordering
 ```
 
-A reboot test is part of acceptance, not an optional extra. Mounts that work until the next reboot are not persistent.
+A reboot test is part of acceptance. Mounts that work until the next reboot aren't persistent.
 
 ---
 

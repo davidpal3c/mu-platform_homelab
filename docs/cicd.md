@@ -1,14 +1,14 @@
 # CI/CD — commit to cluster
 
-**Status: PLANNED.** No pipeline exists yet. It is designed here so the delivery path is a decision rather than an accident, and it lands with the deployment-discipline phase — after Kubernetes and observability, before the workload goes live.
+**Status: PLANNED.** No pipeline exists yet. It's designed here so the delivery path ends up being a decision rather than an accident, and it lands with the deployment-discipline phase, after Kubernetes and observability but before the workload goes live.
 
 ---
 
 ## 1. The goal
 
-Get a Lemurjob commit onto the cluster **without a human running `kubectl apply` from a laptop**.
+Get a Lemurjob commit onto the cluster **without anyone running `kubectl apply` from a laptop**.
 
-That constraint drives everything below. Manual deploys are the reason environments drift, the reason nobody can say what version is actually running, and the reason rollback becomes an archaeology exercise. On a one-person homelab it is tempting to skip — which is exactly why it is worth building here, where the cost of getting it wrong is a weekend rather than a customer.
+That constraint drives everything below. Manual deploys are how environments drift and how "what version is actually running?" stops having an answer. On a one-person homelab it's tempting to skip, which is exactly why it's worth building here, where getting it wrong costs a weekend instead of a customer.
 
 ---
 
@@ -57,7 +57,7 @@ flowchart LR
 | Deploy | After successful build | Automatic to the single environment |
 | Health gate | Post-deploy | Readiness + smoke probe; failure triggers rollback |
 
-**Image tags are immutable and digest-pinned.** `latest` makes "what is running right now?" unanswerable and makes rollback a coin flip. Every deployed image is traceable to exactly one commit.
+**Image tags are immutable and digest-pinned.** `latest` makes "what's running right now?" unanswerable and turns rollback into a coin flip. Every deployed image traces back to exactly one commit.
 
 ---
 
@@ -71,7 +71,7 @@ CI runs on a hosted runner rather than on the node.
 | Blast radius | A build that fills a disk should not be able to take the cluster with it |
 | Trust boundary | The runner needs registry credentials, not cluster admin |
 
-Self-hosting the runner on the node is a possible later optimisation — with resource limits, a dedicated namespace, and an explicit decision to accept the contention.
+Self-hosting the runner on the node is a possible later optimisation, with resource limits, a dedicated namespace, and a conscious decision to accept the contention.
 
 ---
 
@@ -83,10 +83,10 @@ The cluster reconciles toward a declared desired state committed to Git, rather 
 |----------|---------------------|
 | No inbound cluster credentials in CI | CI never holds `kubeconfig`; a compromised runner cannot reach the cluster |
 | Git is the source of truth | "What is deployed" is answered by reading a repo, not by querying a cluster |
-| Drift correction | Manual `kubectl` changes get reconciled away — which is the point |
-| Rollback | Revert the commit; the cluster follows |
+| Drift correction | Manual `kubectl` changes get reconciled away, which is the intent |
+| Rollback | Revert the commit and the cluster follows |
 
-This repo holds the manifests and Helm values under `deployments/`. Lemurjob's application source stays in its own repository. The split is intentional: application changes and deployment changes have different review needs and different failure modes.
+This repo holds the manifests and Helm values under `deployments/`. Lemurjob's application source stays in its own repository. The split is intentional, since application changes and deployment changes have different review needs and different failure modes.
 
 ---
 
@@ -99,20 +99,20 @@ This repo holds the manifests and Helm values under `deployments/`. Lemurjob's a
 | Never in CI logs | Masked variables; no secret echoed in build output |
 | Rotatable without a rebuild | Kubernetes secrets, referenced by name from manifests |
 
-Encrypted-secrets-in-Git (SOPS, sealed-secrets) is the natural next step once there is more than one secret consumer. It is deliberately deferred rather than adopted prematurely.
+Encrypted-secrets-in-Git (SOPS, sealed-secrets) is the natural next step once there's more than one secret consumer. Deferring it for now rather than adopting it early.
 
 ---
 
 ## 7. Rollback
 
-Rollback is a first-class path, not an emergency improvisation:
+Rollback is a designed path, not something improvised mid-incident:
 
-1. **Automatic** — the post-deploy health gate fails, and the previous revision is restored without a human in the loop.
-2. **Manual, by revision** — `kubectl rollout undo`, or roll the Helm release back.
-3. **Manual, by commit** — revert the deployment commit; reconciliation applies it.
-4. **Data-layer rollback** — schema and data are *not* covered by any of the above. Migrations must be backward-compatible for one release, so an application rollback does not require a database restore.
+1. **Automatic.** The post-deploy health gate fails and the previous revision is restored with no human in the loop.
+2. **Manual, by revision.** `kubectl rollout undo`, or roll the Helm release back.
+3. **Manual, by commit.** Revert the deployment commit and reconciliation applies it.
+4. **Data-layer rollback.** Schema and data aren't covered by any of the above. Migrations stay backward-compatible for one release so an application rollback doesn't require a database restore.
 
-That last point is the one that actually bites. Application rollback is cheap; database rollback means [restore from backup](backups.md) and losing everything since the last one.
+That last one is what actually bites. Application rollback is cheap. Database rollback means [restore from backup](backups.md) and losing everything since the last one.
 
 ---
 
@@ -126,14 +126,14 @@ The delivery phase is complete when:
 4. The currently running version is identifiable from Git alone.
 5. Deploy events are visible alongside metrics, so a change can be correlated with a regression.
 
-Point 3 is the one worth testing on purpose. A rollback path that has never rolled anything back is decoration.
+Point 3 is worth breaking a deploy on purpose for. A rollback path that has never rolled anything back isn't one yet.
 
 ---
 
 ## 9. Deferred
 
-- Staging environment — one node, one environment for now; the trade-off is accepted and stated.
-- Progressive delivery (canary, blue/green) — needs replica headroom this node does not have.
+- Staging environment. One node, one environment for now, and I'm accepting that trade-off knowingly.
+- Progressive delivery (canary, blue/green), which needs replica headroom this node doesn't have.
 - Automated database migration gating.
 - Image signing and provenance attestation.
 - Preview environments per pull request.

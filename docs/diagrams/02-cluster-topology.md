@@ -70,8 +70,8 @@ flowchart TB
     K3S -.->|cluster snapshots| BKP
 ```
 
-**Three namespaces, three operational profiles:** application workloads that redeploy constantly, stateful services that must not be casually restarted, and a monitoring stack that has to keep working while the other two are broken.
+**Three namespaces, three operational profiles:** application workloads that redeploy constantly, stateful services that shouldn't be casually restarted, and a monitoring stack that has to keep working while the other two are broken.
 
-**Storage routing is the load-bearing detail.** Postgres and Redis PVCs resolve to the database tier; Prometheus and Loki resolve to the platform tier. Neither competes with the other for IO — which is the entire reason those are separate devices.
+**Storage routing is the detail doing the most work here.** Postgres and Redis PVCs resolve to the database tier, Prometheus and Loki to the platform tier. Neither competes with the other for IO, which is why those are separate devices.
 
 **Data services are `ClusterIP` only.** Nothing in `lemurjob-data` is reachable from outside the cluster.

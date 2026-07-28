@@ -10,6 +10,6 @@ Platform primitives — the infrastructure layer itself, independent of any work
 | `storage/` | Storage class definitions, tier layout reference, `fstab` records | Built — layout documented in [../docs/storage.md](../docs/storage.md) |
 | `secrets/` | Secret *management* approach only. **No secret material is ever committed.** | Planned |
 
-Directories are populated as each phase is executed. Empty ones are placeholders for work that has not started — see the roadmap in the [root README](../README.md).
+Directories get populated as each phase is executed. Empty ones are placeholders for work that hasn't started yet. See the roadmap in the [root README](../README.md).
 
-Anything workload-specific belongs in [`../workloads/`](../workloads/README.md) or [`../deployments/`](../deployments/README.md), not here.
+Anything workload-specific belongs in [`../workloads/`](../workloads/README.md) or [`../deployments/`](../deployments/README.md) rather than here.

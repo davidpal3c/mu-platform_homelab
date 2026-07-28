@@ -1,6 +1,6 @@
 # Kubernetes — k3s
 
-**Status: IN FLIGHT.** The cluster bootstrap is the task currently being executed. Storage prerequisites are complete; nothing below is claimed as running until the bootstrap is verified on the node.
+**Status: IN FLIGHT.** The cluster bootstrap is the task I'm working on now. Storage prerequisites are complete, and nothing below is claimed as running until the bootstrap is verified on the node.
 
 ---
 
@@ -15,7 +15,7 @@ Single node, 32 GB of RAM, and a workload that needs a real cluster rather than 
 | Batteries included, removable | Ships Traefik, ServiceLB, `local-path`, CoreDNS; each can be disabled and replaced |
 | Sane storage story | `local-path` provisioner maps PVCs onto the host's own tiers |
 
-Full kubeadm would spend a meaningful share of this node's memory on control-plane components that buy nothing on one machine. Docker Compose would skip exactly the parts worth practising: scheduling, PVC lifecycle, ingress, namespace isolation, and rollout mechanics.
+Full kubeadm would spend a real share of this node's memory on control-plane components that buy nothing on one machine. Docker Compose would skip the parts most worth practising: scheduling, PVC lifecycle, ingress, namespace isolation, and rollout mechanics.
 
 ---
 
@@ -29,9 +29,9 @@ The k3s runtime writes to paths already bind-mounted onto the platform tier by t
 | `/var/lib/kubelet` | `/platform/kubelet` |
 | `/var/lib/containerd` | `/platform/containerd` |
 
-This is why storage came first. Container image layers and kubelet state are among the highest-churn data on the node, and none of it belongs on a RAID1 boot mirror built from decade-old SATA SSDs.
+This is why storage came first. Container image layers and kubelet state are some of the highest-churn data on the node, and none of it belongs on a RAID1 boot mirror built from decade-old SATA SSDs.
 
-Verified — not assumed — with:
+Verified rather than assumed, with:
 
 ```bash
 findmnt /var/lib/rancher /var/lib/kubelet /var/lib/containerd
@@ -47,9 +47,9 @@ findmnt /var/lib/rancher /var/lib/kubelet /var/lib/containerd
 | `lemurjob-data` | Stateful services — PostgreSQL, Redis |
 | `observability` | Prometheus, Grafana, Loki, Alertmanager |
 
-Deliberately small. Three namespaces map to three genuinely different operational profiles: stateless app workloads that get redeployed constantly, stateful services that must not be casually restarted, and the monitoring stack that has to keep working while the other two are broken.
+Kept small on purpose. Three namespaces map to three genuinely different operational profiles: stateless app workloads that get redeployed constantly, stateful services that shouldn't be casually restarted, and a monitoring stack that has to keep working while the other two are broken.
 
-Splitting data into its own namespace is the load-bearing decision — it makes "do not blanket-delete this namespace" a structural property instead of a thing you have to remember at 2 a.m.
+Splitting data into its own namespace is the decision doing the most work here. It turns "don't blanket-delete this namespace" into a structural property instead of something I have to remember while half-awake.
 
 System components (CoreDNS, Traefik, `local-path-provisioner`, metrics-server) stay in `kube-system` as k3s ships them.
 
@@ -67,13 +67,13 @@ System components (CoreDNS, Traefik, `local-path-provisioner`, metrics-server) s
 | Resize | Not supported by `local-path`; capacity is planned up front |
 | Backup | PVC contents are backed up at the application layer (`pg_dump`, Redis snapshots), never by copying live PV directories |
 
-Postgres and Redis PVCs resolve to the database tier so that their IO stays isolated from container and observability churn. That routing is the whole reason `/data` exists as a separate device.
+Postgres and Redis PVCs resolve to the database tier so their IO stays clear of container and observability churn. That routing is why `/data` exists as a separate device in the first place.
 
 ---
 
 ## 5. Bootstrap acceptance
 
-The bootstrap is not accepted until all of the following hold on the live node:
+The bootstrap isn't accepted until all of these hold on the live node:
 
 1. `kubectl get nodes` reports the node `Ready`.
 2. `kubectl get pods -A` shows core system pods healthy.
@@ -99,18 +99,18 @@ Rollback is the k3s uninstall script, followed by re-verifying that tier mounts 
 
 ## 7. Deferred to later phases
 
-- **Ingress controller and TLS** — Traefik ships with k3s but stays internal until the edge phase; the ingress choice, ACME configuration, and exposure review happen there.
-- **Observability stack** — deployed after the cluster is accepted, and before any workload. See [observability.md](observability.md).
-- **Network policy** — default-allow today. Namespace-level policy is a hardening-phase deliverable.
-- **Resource quotas and limits** — needed once real workloads compete with the control plane for 32 GB.
-- **Backup of cluster state** — k3s etcd/SQLite snapshots to the backup tier. See [backups.md](backups.md).
+- **Ingress controller and TLS.** Traefik ships with k3s but stays internal until the edge phase, where the ingress choice, ACME configuration, and exposure review happen.
+- **Observability stack.** Deployed after the cluster is accepted and before any workload. See [observability.md](observability.md).
+- **Network policy.** Default-allow today. Namespace-level policy is a hardening-phase deliverable.
+- **Resource quotas and limits.** Needed once real workloads compete with the control plane for 32 GB.
+- **Backup of cluster state.** k3s etcd/SQLite snapshots to the backup tier. See [backups.md](backups.md).
 
 ---
 
 ## 8. Single-node realities
 
-Stated plainly rather than papered over:
+Worth being upfront about:
 
-- **No high availability.** One control plane. Node loss is downtime, and the recovery story is restore-from-backup — which is why restore rehearsal is a first-class deliverable rather than an aspiration.
+- **No high availability.** One control plane. Losing the node means downtime, and recovery means restoring from backup, which is why rehearsing the restore is an actual deliverable and not an aspiration.
 - **Control plane and workloads share resources.** A memory-hungry workload can destabilise the API server. Limits and quotas are how that gets bounded.
-- **`local-path` PVs are node-local.** Fine on one node; a migration problem the day a second node exists. Documented now so it is not a surprise later.
+- **`local-path` PVs are node-local.** Fine on one node, and a migration problem the day a second one exists. Written down now so it isn't a surprise later.

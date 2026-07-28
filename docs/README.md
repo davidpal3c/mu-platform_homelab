@@ -5,7 +5,7 @@ Platform documentation for **mu-platform** — the homelab platform node `mu-nod
 Each document states its **status** up front:
 
 - **Built** — implemented on the node and verified.
-- **In flight** — actively being executed.
+- **In flight** — being worked on now.
 - **Planned** — designed and sequenced, not yet deployed.
 
 | Document | Scope | Status |
@@ -32,4 +32,4 @@ Each document states its **status** up front:
 
 ## What is not here
 
-Planning material, task specifications, build reports, review reports, and the engineering log are kept in a separate, git-ignored `_workspace/` tree and tracked in their own repository. This directory holds the architectural and operational record only.
+Planning material, task specs, build reports, review reports, and the engineering log live in a separate, git-ignored `_workspace/` tree that's tracked in its own repository. This directory holds the architectural and operational record only.

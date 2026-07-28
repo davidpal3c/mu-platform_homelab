@@ -1,40 +1,40 @@
 # mu-platform
 
-A single-node **homelab platform** built and operated like a small production cluster — and used to run one real, live workload rather than a lab full of toys.
+A single-node homelab platform, built and operated like a small production cluster, running one real workload instead of a shelf full of self-hosted toys.
 
-This repo is the public, operational record of the platform layer: hardware and storage design, Kubernetes (k3s), observability, ingress and TLS, persistence, backups, and the CI/CD path that gets a workload from commit to cluster.
+This repo is the public record of the platform layer: hardware and storage design, Kubernetes (k3s), observability, ingress and TLS, persistence, backups, and the path that gets a commit onto the cluster.
 
-**Status: Phase 0 — platform foundation.** Hardware, OS, and tiered storage are built and verified. Kubernetes bootstrap is the task in flight. Everything past that is designed and sequenced but not yet deployed — this README says so explicitly wherever it applies, and so do the docs.
+**Status: Phase 0, platform foundation.** Hardware, OS, and tiered storage are built and verified. The Kubernetes bootstrap is what's in flight. Everything past that is designed and sequenced but not deployed yet, and the docs say so wherever it applies.
 
 ---
 
 ## Why this exists
 
-Most homelab repos are a pile of `docker-compose` files. This one is deliberately structured the way a platform team would sequence a real rollout:
+The homelab platform showcases a structured rollout:
 
 > **infrastructure → observability → deployment discipline → workloads**
 
-The platform has to be able to run, observe, and recover itself *before* an application is allowed on it. That ordering is the point of the project, and it is enforced by the task queue: application work stays blocked until the platform capability it depends on is accepted.
+The platform should be able to run, observe, and recover itself before an application goes on it. The task queue enforces that ordering: application work stays blocked until the platform capability it depends on is accepted.
 
-The second design rule is that there is **one workload, and it is real**. Platform engineering only teaches you something when something actually depends on it — uptime, backups, and a restore path start to matter when a live service is on the other side.
+The second rule is that there's one workload, and it's real. Platform engineering only teaches you much when something actually depends on it. Uptime, backups, and a restore path start to matter once a live service sits on the other side of them.
 
 ---
 
 ## The workload
 
-**[Lemurjob](docs/workload-lemurjob.md)** (product name *Lemurian*) — a multi-user job-application-prep service with a web control plane and a Telegram/Signal bot layer. It is the sole workload this platform is being built for.
+**[Lemurjob](docs/workload-lemurjob.md)** (product name *Lemurian*) is a multi-user job-application-prep service with a web control plane and a Telegram/Signal bot layer. It's the only workload this platform is being built for.
 
-Lemurjob is the *reason* for the platform requirements, not an afterthought:
+Its needs are what set the platform requirements:
 
-| Lemurjob needs | Platform capability it forces |
-|----------------|-------------------------------|
-| Browser-facing control plane | Real inbound HTTPS — ingress controller + TLS certificates |
-| Multi-tenant user data | PostgreSQL on an isolated storage tier, with a verified restore path |
-| Async agent / render jobs | Redis + worker deployments, queue depth as a monitored signal |
-| A service people actually use | Metrics, logs, alerts — you cannot operate blind |
-| Iteration without downtime | A deployment pipeline, not `kubectl apply` from a laptop |
+| Lemurjob needs | What the platform has to provide |
+|----------------|----------------------------------|
+| Browser-facing control plane | Real inbound HTTPS: ingress controller and TLS certificates |
+| Multi-tenant user data | PostgreSQL on an isolated storage tier, with a restore path that's been tested |
+| Async agent and render jobs | Redis plus worker deployments, with queue depth as a monitored signal |
+| A service people actually use | Metrics, logs, and alerts |
+| Iteration without downtime | A deployment pipeline instead of `kubectl apply` from a laptop |
 
-Application source for Lemurjob lives in its own repo. **This repo owns how it is deployed, operated, observed, and recovered** — not what it does.
+Lemurjob's application source lives in its own repo. This one owns how it gets deployed, operated, observed, and recovered.
 
 ---
 
@@ -51,7 +51,7 @@ Application source for Lemurjob lives in its own repo. **This repo owns how it i
 | Database tier | ~477 GB NVMe → `/data` |
 | Backup tier | ~931 GB SATA HDD → `/backups` |
 
-One host, but partitioned by **failure domain**: OS churn, container/observability churn, database IO, and backups each get their own device, so a full disk or a bad deploy has a bounded blast radius. Details: [docs/storage.md](docs/storage.md).
+One host, but split by failure domain. OS churn, container and observability churn, database IO, and backups each get their own device, so a full disk or a bad deploy stays contained. Details in [docs/storage.md](docs/storage.md).
 
 ---
 
@@ -69,7 +69,7 @@ One host, but partitioned by **failure domain**: OS churn, container/observabili
 | [docs/diagrams/](docs/diagrams/README.md) | Mermaid sources for the diagrams above |
 | [docs/adr/](docs/adr/README.md) | Architecture decision records |
 
-Every doc carries an explicit **status** — `built`, `in flight`, or `planned`. Nothing here describes infrastructure that does not exist.
+Every doc says up front whether it's `built`, `in flight`, or `planned`. Nothing here describes infrastructure that doesn't exist yet.
 
 ---
 
@@ -82,7 +82,7 @@ deployments/    cluster deployment artifacts — manifests, helm values, namespa
 workloads/      per-workload deployment state and runbooks (Lemurjob)
 ```
 
-`_workspace/` is git-ignored. Planning docs, task specs, build reports, and engineering logs live there and are tracked separately — this repo stays the operational and architectural record, not the scratchpad.
+`_workspace/` is git-ignored. Planning docs, task specs, build reports, and the engineering log live there and are tracked separately, so this repo stays the operational and architectural record rather than the scratchpad.
 
 ---
 
@@ -99,7 +99,7 @@ workloads/      per-workload deployment state and runbooks (Lemurjob)
 | 4 | Operational maturity — backup automation, restore drills, PITR | Planned |
 | 5 | Hardening — tracing, network policy, capacity work | Planned |
 
-The milestone that matters: **Lemurjob reachable publicly over HTTPS, with observability active, alerts wired, and a restore that has actually been tested.** Not "it runs on my machine" — a service that can be operated and recovered.
+The milestone I'm working toward: Lemurjob reachable publicly over HTTPS, observability running, alerts wired somewhere I'll actually see them, and a restore I've done at least once. Getting it running is the easy half.
 
 ---
 
@@ -107,4 +107,4 @@ The milestone that matters: **Lemurjob reachable publicly over HTTPS, with obser
 
 **The repo is the memory.**
 
-Architecture, deployment truth, and decisions are written to files rather than living in someone's head or a chat log. Anyone — or any agent — should be able to reload the full state of this platform from what is committed here.
+Architecture, deployment details, and the reasoning behind decisions get written down here instead of living in my head or in a chat log. Anyone picking this up, me included six months from now, should be able to reload the state of the platform from what's committed.
