@@ -1,28 +1,23 @@
 # mu-platform
 
-A single-node homelab platform, built and operated like a small production cluster, running one real workload instead of a shelf full of self-hosted toys.
+This is single-node homelab platform, built and operated like a small production cluster, running one real workload currently being built, [Lemurjob](docs/workload-lemurjob.md), testing uptime, backups, and a restore path start. 
 
-This repo is the public record of the platform layer: hardware and storage design, Kubernetes (k3s), observability, ingress and TLS, persistence, backups, and the path that gets a commit onto the cluster.
-
-**Status: Phase 0, platform foundation.** Hardware, OS, and tiered storage are built and verified. The Kubernetes bootstrap is what's in flight. Everything past that is designed and sequenced but not deployed yet, and the docs say so wherever it applies.
-
----
-
-## Why this exists
+This repo is the public record of the platform layer where you can find hardware and storage design, Kubernetes (k3s), observability, ingress and TLS, persistence, backups, and the path that gets a commit onto the cluster.
 
 The homelab platform showcases a structured rollout:
 
 > **infrastructure → observability → deployment discipline → workloads**
 
-The platform should be able to run, observe, and recover itself before an application goes on it. The task queue enforces that ordering: application work stays blocked until the platform capability it depends on is accepted.
 
-The second rule is that there's one workload, and it's real. Platform engineering only teaches you much when something actually depends on it. Uptime, backups, and a restore path start to matter once a live service sits on the other side of them.
+**Status: Phase 0, platform foundation.** 
+Hardware, OS, and tiered storage are built and verified. The Kubernetes bootstrap is what's in flight. Everything past that is designed and sequenced but not deployed yet.
+
 
 ---
 
 ## The workload
 
-**[Lemurjob](docs/workload-lemurjob.md)** (product name *Lemurian*) is a multi-user job-application-prep service with a web control plane and a Telegram/Signal bot layer. It's the only workload this platform is being built for.
+**[Lemurjob](docs/workload-lemurjob.md)** (product name *Lemurian*) is a multi-user job-application-prep service with a web control plane and a Telegram/Signal bot layer. It's the only workload this platform is being built for right now.
 
 Its needs are what set the platform requirements:
 
